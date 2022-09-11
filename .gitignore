@@ -34,3 +34,23 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# prisma
+introspection-engine*
+query-engine*
+migration-engine*
+prisma-fmt*
+libquery_engine*
+query_engine-windows.dll.node
+
+*tmp.db
+dist/
+
+*.tsbuildinfo
+.prisma
+.pnpm-store
+
+dev.db
+dev.db-journal
+junit.xml
+/output.txt
