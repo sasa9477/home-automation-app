@@ -14,7 +14,7 @@ export default function MenuAppBar() {
   };
 
   return (
-    <AppBar position="static">
+    <AppBar position="sticky">
       <Toolbar>
         <div>
           <IconButton

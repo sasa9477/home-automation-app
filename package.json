@@ -3,8 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "npm run open-browser && cross-env NODE_OPTIONS='--inspect' next dev",
-    "open-browser": "start http://localhost:3000",
+    "dev": "cross-env NODE_OPTIONS='--inspect' next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -18,7 +17,9 @@
     "axios": "^0.27.2",
     "next": "12.3.0",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "react-hook-form": "^7.35.0",
+    "react-use": "^17.4.0"
   },
   "devDependencies": {
     "@types/node": "18.7.16",

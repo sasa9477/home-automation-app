@@ -6,7 +6,17 @@ function MyApp({ Component, pageProps }: AppProps) {
   const isDarkMode = useMediaQuery('(prefers-color-scheme: dark)')
   const theme = createTheme({
     palette: {
-      mode: isDarkMode ? 'dark' : 'light'
+      mode: isDarkMode ? 'dark' : 'light',
+      text: {
+        disabled: 'text.primary'
+      }
+    },
+    components: {
+      MuiInputBase: {
+        defaultProps: {
+          autoComplete: 'off',
+        },
+      },
     }
   })
 
