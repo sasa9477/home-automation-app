@@ -1,17 +1,25 @@
 import type { NextPage } from 'next'
-import { Button, Stack } from '@mui/material';
+import { FormGroup, styled } from '@mui/material';
+import FunctionSwitchFormCotrol from '../components/FunctionSwitchFormControl';
 
 const Home: NextPage = () => {
   return (
-    <main>
-      <Stack spacing={2} sx={{ m: 2, p: 2 }}>
-        <Button variant="contained" color="primary">primary</Button>
-        <Button variant="contained" color="secondary">secondary</Button>
-        <Button variant="contained" color="warning">warning</Button>
-        <Button variant="contained" color="info">info</Button>
-        <Button variant="contained" color="success">success</Button>
-      </Stack>
-    </main>
+    <FormGroup
+      sx={{
+        m: 1,
+        p: 1,
+        rowGap: 2,
+      }}>
+      <FunctionSwitchFormCotrol
+        label="Light 3"
+      />
+      <FunctionSwitchFormCotrol
+        label="Light 3"
+      />
+      <FunctionSwitchFormCotrol
+        label="Light 3"
+      />
+    </FormGroup >
   )
 }
 
