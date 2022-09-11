@@ -1,0 +1,62 @@
+{
+  "React Component Template": {
+    "scope": "typescriptreact",
+    "prefix": "reactcomponet",
+    "body": [
+      "type ${TM_FILENAME_BASE}Props = {",
+      "}",
+      "",
+      "const ${TM_FILENAME_BASE}: React.FC<${TM_FILENAME_BASE}Props> = (): JSX.Element => {",
+      "  return (",
+      "    <>",
+      "    </>",
+      "  )",
+      "}",
+      "",
+      "export default ${TM_FILENAME_BASE}"
+    ],
+    "description": "React コンポーネントのテンプレートです。"
+  },
+
+  "React Hooks useState Template": {
+    "scope": "typescript, typescriptreact",
+    "prefix": "useState",
+    "body": ["const [ ${1:state}, set${1/^(.)(.*)$/${1:/upcase}${2}/} ] = useState($2)"],
+    "description": "ReactHooks useStateのテンプレートです。"
+  },
+
+  "React Hooks useEffect Async Function Template": {
+    "scope": "typescript, typescriptreact",
+    "prefix": "useEffectAsyncFunction",
+    "body": ["useEffect(() => {", "  (async () => {", "  })()", "}, [])"],
+    "description": "ReactHooks useEffectの非同期関数テンプレートです。"
+  },
+
+  "NextJs Api Handler": {
+    "scope": "typescript",
+    "prefix": "nexthandlertemplate",
+    "body": [
+      "import { NextApiHandler } from \"next\";",
+      "",
+      "const handler: NextApiHandler = (req, res) => {",
+      "}",
+      "",
+      "export default handler"
+    ],
+    "description": "NextJs Api handlerの テンプレートです。"
+  },
+
+  "Material UI Styled Using Theme Template": {
+    "scope": "typescriptreact",
+    "prefix": "styledusingtheme",
+    "body": ["styled(${1:baseComponent})(({ theme }) => ({", "}))"],
+    "description": "Material UI Using Theme Styledのテンプレートです。"
+  },
+
+  "Material UI Styled Template": {
+    "scope": "typescriptreact",
+    "prefix": "styled",
+    "body": ["styled(${1:baseComponent})({", "})"],
+    "description": "Material UI Styledの テンプレートです。"
+  }
+}
