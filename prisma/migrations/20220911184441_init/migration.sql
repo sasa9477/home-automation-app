@@ -1,8 +1,8 @@
 -- CreateTable
 CREATE TABLE "SWitcher" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "ipaddress" TEXT NOT NULL,
     "name" TEXT NOT NULL,
+    "ipaddress" TEXT NOT NULL,
     "enabled" BOOLEAN NOT NULL DEFAULT false
 );
 
