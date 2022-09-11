@@ -1,5 +1,5 @@
 import type { NextPage } from 'next'
-import { FormGroup, styled } from '@mui/material';
+import { FormGroup } from '@mui/material';
 import FunctionSwitchFormCotrol from '../components/FunctionSwitchFormControl';
 
 const Home: NextPage = () => {

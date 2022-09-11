@@ -1,4 +1,4 @@
-import { FormControlLabel, FormControlLabelProps, styled, Switch, Typography } from "@mui/material"
+import { FormControlLabel, Switch, Typography } from "@mui/material"
 
 type FunctionSwitchFormCotrolProps = {
   checked?: boolean;
