@@ -1,8 +1,14 @@
 import * as React from 'react';
-import { AppBar, Toolbar, Typography, IconButton, MenuItem, Menu } from '@mui/material';
+import { AppBar, Toolbar, Typography, IconButton, MenuItem, Menu, MenuItemProps } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
+import Link from 'next/link';
+import { forwardRef } from 'react';
+import LinkMenuItem from './LinkMenuItem';
 
-export default function MenuAppBar() {
+type MenuAppBarProps = {
+}
+
+const MenuAppBar: React.FC<MenuAppBarProps> = (): JSX.Element => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -12,6 +18,21 @@ export default function MenuAppBar() {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const menuList = [
+    {
+      href: '/',
+      name: 'ホーム'
+    },
+    {
+      href: '/setting',
+      name: '設定',
+    },
+    {
+      href: '/log',
+      name: 'ログ',
+    }
+  ]
 
   return (
     <AppBar position="sticky">
@@ -42,8 +63,14 @@ export default function MenuAppBar() {
             open={Boolean(anchorEl)}
             onClose={handleClose}
           >
-            <MenuItem onClick={handleClose}>Setting</MenuItem>
-            <MenuItem onClick={handleClose}>Log</MenuItem>
+            {menuList.map(menuItem => (
+              <LinkMenuItem
+                key={menuItem.href}
+                href={menuItem.href}
+                onClick={handleClose}>
+                {menuItem.name}
+              </LinkMenuItem>
+            ))}
           </Menu>
         </div>
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
@@ -53,3 +80,5 @@ export default function MenuAppBar() {
     </AppBar>
   );
 }
+
+export default MenuAppBar
