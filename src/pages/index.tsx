@@ -1,15 +1,15 @@
 import type { GetStaticProps, NextPage } from 'next'
 import { Stack } from '@mui/material';
-import { SWitcher } from '@prisma/client';
+import { Switcher } from '@prisma/client';
 import FunctionSwitchCard from '../components/FunctionSwitchCard';
 import { prismaClient } from '../utils/prismaClient';
 
 type HomePageProps = {
-  swichers: SWitcher[]
+  swichers: Switcher[]
 }
 
 export const getStaticProps: GetStaticProps<HomePageProps> = async (context) => {
-  const swichers = await prismaClient.sWitcher.findMany({
+  const swichers = await prismaClient.switcher.findMany({
     where: {
       enabled: true
     },
@@ -36,7 +36,7 @@ const Home: NextPage<HomePageProps> = (props) => {
       {props.swichers.map((switcher) => (
         <FunctionSwitchCard
           key={switcher.id}
-          label={switcher.name}/>
+          label={switcher.name} />
       ))}
       <FunctionSwitchCard
         label="12345678901234567890"

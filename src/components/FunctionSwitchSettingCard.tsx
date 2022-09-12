@@ -3,6 +3,7 @@ import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import SettingsIcon from '@mui/icons-material/Settings'
 import { useFirstMountState, useToggle } from 'react-use';
 import { useRef } from 'react';
+import apiClient from '../utils/apiClient';
 
 type FormInputs = {
   id: number,
@@ -24,7 +25,8 @@ const FunctionSwitchSettingCard: React.FC<FunctionSwitchSettingCardProps> = (pro
     }
   })
 
-  const onSubmit: SubmitHandler<FormInputs> = (data: FormInputs) => {
+  const onSubmit: SubmitHandler<FormInputs> = async (data) => {
+    await apiClient.switcher.update({ ...data })
     console.log(`submit: ${JSON.stringify(data, null, 2)}`)
     toggleEdit()
   }

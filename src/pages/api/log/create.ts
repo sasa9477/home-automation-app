@@ -1,27 +1,20 @@
-import { Prisma } from "@prisma/client";
-import { NextApiHandler } from "next";
-import { prismaClient } from "../../../utils/prismaClient";
+import { NextApiHandler } from 'next';
+import { LogCreateRequest, LogCreateResponse } from '../../../interfaces';
+import { prismaClient } from '../../../utils/prismaClient';
 
-export type LogCreateRequest = Prisma.LogCreateInput & {
-}
-
-export type LogCreateResponse = {
-}
-
-const handler: NextApiHandler<LogCreateRequest, LogCreateResponse> = async (req, res) => {
-  const log = req.body;
+const handler: NextApiHandler<LogCreateResponse> = async (req, res) => {
   try {
     await prismaClient.log.create({
       data: {
-        ...log
-      }
-    })
-    res.status(200).end()
+        ...req.body,
+      },
+    });
+    res.status(200).end();
   } catch (e) {
     if (e instanceof Error) {
-      res.status(500).json({ errorMessage: e.message })
+      res.status(500).json({ errorMessage: e.message });
     }
   }
-}
+};
 
-export default handler
+export default handler;

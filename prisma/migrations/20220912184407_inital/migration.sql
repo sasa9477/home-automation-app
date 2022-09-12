@@ -1,5 +1,5 @@
 -- CreateTable
-CREATE TABLE "SWitcher" (
+CREATE TABLE "Switcher" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "name" TEXT NOT NULL,
     "ipaddress" TEXT NOT NULL,
@@ -14,4 +14,4 @@ CREATE TABLE "Log" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "SWitcher_ipaddress_key" ON "SWitcher"("ipaddress");
+CREATE UNIQUE INDEX "Switcher_ipaddress_key" ON "Switcher"("ipaddress");

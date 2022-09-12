@@ -7,7 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model SWitcher {
+model Switcher {
   id        Int     @id @default(autoincrement())
   name      String
   ipaddress String  @unique

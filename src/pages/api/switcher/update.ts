@@ -1,30 +1,28 @@
-import { Prisma } from "@prisma/client";
-import { NextApiHandler } from "next";
-import { prismaClient } from "../../../utils/prismaClient";
+import { Prisma } from '@prisma/client';
+import { NextApiHandler } from 'next';
+import { prismaClient } from '../../../utils/prismaClient';
 
-export type SwitcherUpdateRequest = Prisma.SWitcherUncheckedCreateInput & {
-}
+export type SwitcherUpdateRequest = Prisma.SwitcherUncheckedCreateInput & {};
 
-export type SwitcherUpdateResponse = {
-}
+export type SwitcherUpdateResponse = {};
 
-const handler: NextApiHandler<SwitcherUpdateRequest, SwitcherUpdateResponse> = async (req, res) => {
+const handler: NextApiHandler<SwitcherUpdateResponse> = async (req, res) => {
   const switcher = req.body;
   try {
-    await prismaClient.sWitcher.update({
+    await prismaClient.switcher.update({
       where: {
-        id: switcher.id ?? 0
+        id: switcher.id ?? 0,
       },
       data: {
-        ...switcher
-      }
-    })
-    res.status(200).end()
+        ...switcher,
+      },
+    });
+    res.status(200).end();
   } catch (e) {
     if (e instanceof Error) {
-      res.status(500).json({ errorMessage: e.message })
+      res.status(500).json({ errorMessage: e.message });
     }
   }
-}
+};
 
-export default handler
+export default handler;
