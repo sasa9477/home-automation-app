@@ -8,8 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "prisma-generate": "npx prisma version && npx prisma format && npx prisma generate",
-    "prisma-migrate": "npx prisma migrate dev --name",
-    "generate-schema-json": "node scripts/generate-prisma-json-schema.mjs"
+    "prisma-migrate": "npx prisma migrate dev --name"
   },
   "dependencies": {
     "@emotion/react": "^11.10.4",
