@@ -7,8 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "prisma-client-generate": "npx prisma generate",
-    "prisma-db-migrate": "npx prisma migrate dev --name"
+    "prisma-generate": "npx prisma version && npx prisma format && npx prisma generate",
+    "prisma-migrate": "npx prisma migrate dev --name",
+    "generate-schema-json": "node scripts/generate-prisma-json-schema.mjs"
   },
   "dependencies": {
     "@emotion/react": "^11.10.4",
@@ -33,6 +34,7 @@
     "eslint-config-prettier": "^8.5.0",
     "prettier": "^2.7.1",
     "prisma": "^4.3.1",
+    "prisma-json-schema-generator": "^3.1.1",
     "typescript": "4.8.3"
   }
 }
