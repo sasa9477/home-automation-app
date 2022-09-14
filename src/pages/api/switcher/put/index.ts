@@ -1,13 +1,9 @@
-import { Prisma } from '@prisma/client';
 import { NextApiHandler } from 'next';
-import { prismaClient } from '../../../utils/prismaClient';
-
-export type SwitcherUpdateRequest = Prisma.SwitcherUncheckedCreateInput & {};
-
-export type SwitcherUpdateResponse = {};
+import { SwitcherUpdateRequest, SwitcherUpdateResponse } from '../../../../interfaces';
+import { prismaClient } from '../../../../utils/prismaClient';
 
 const handler: NextApiHandler<SwitcherUpdateResponse> = async (req, res) => {
-  const switcher = req.body;
+  const switcher = req.body as SwitcherUpdateRequest;
   try {
     await prismaClient.switcher.update({
       where: {

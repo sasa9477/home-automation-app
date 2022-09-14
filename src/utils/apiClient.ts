@@ -12,12 +12,12 @@ import {
 
 const apiClient = {
   switcher: {
-    create: (req: SwitcherCreateRequest) => axios.post<SwitcherCreateResponse>('/api/switcher/create', req),
-    update: (req: SwitcherUpdateRequest) => axios.put<SwitcherUpdateResponse>('/api/switcher/create', req),
-    delete: (req: SwitcherDeleteRequest) => axios.delete<SwitcherDeleteResponse>(`/api/switcher/create/${req}`),
+    create: (req: SwitcherCreateRequest) => axios.post<SwitcherCreateResponse>('/api/switcher/post', req),
+    update: (req: SwitcherUpdateRequest) => axios.put<SwitcherUpdateResponse>('/api/switcher/put', req),
+    delete: (req: SwitcherDeleteRequest) => axios.delete<SwitcherDeleteResponse>(`/api/switcher/delete/${req}`),
   },
   log: {
-    create: (req: LogCreateRequest) => axios.post<LogCreateResponse>('/api/switcher/create', req),
+    create: (req: LogCreateRequest) => axios.post<LogCreateResponse>('/api/switcher/post', req),
   },
 };
 
