@@ -54,5 +54,3 @@ dev.db
 dev.db-journal
 junit.xml
 /output.txt
-
-prisma/json-schema*
