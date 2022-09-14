@@ -1,4 +1,4 @@
-import type { GetStaticProps, NextPage } from 'next'
+import type { GetServerSideProps, NextPage } from 'next'
 import { Stack } from '@mui/material';
 import { Switcher } from '@prisma/client';
 import FunctionSwitchCard from '../components/FunctionSwitchCard';
@@ -8,7 +8,7 @@ type HomePageProps = {
   swichers: Switcher[]
 }
 
-export const getStaticProps: GetStaticProps<HomePageProps> = async (context) => {
+export const getServerSideProps: GetServerSideProps<HomePageProps> = async (context) => {
   const swichers = await prismaClient.switcher.findMany({
     where: {
       enabled: true
