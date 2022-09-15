@@ -5,11 +5,11 @@ import FunctionSwitchCard from '../components/FunctionSwitchCard';
 import { prismaClient } from '../utils/prismaClient';
 
 type HomePageProps = {
-  swichers: Switcher[]
+  switchers: Switcher[]
 }
 
 export const getServerSideProps: GetServerSideProps<HomePageProps> = async (context) => {
-  const swichers = await prismaClient.switcher.findMany({
+  const switchers = await prismaClient.switcher.findMany({
     where: {
       enabled: true
     },
@@ -20,12 +20,12 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async (cont
 
   return {
     props: {
-      swichers: swichers
+      switchers
     }
   }
 }
 
-const Home: NextPage<HomePageProps> = (props) => {
+const Home: NextPage<HomePageProps> = ({ switchers }) => {
   return (
     <Stack
       sx={{
@@ -33,7 +33,7 @@ const Home: NextPage<HomePageProps> = (props) => {
         p: 1,
         rowGap: 2,
       }}>
-      {props.swichers.map((switcher) => (
+      {switchers.map((switcher) => (
         <FunctionSwitchCard
           key={switcher.id}
           label={switcher.name} />
