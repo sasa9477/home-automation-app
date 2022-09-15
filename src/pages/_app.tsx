@@ -1,7 +1,9 @@
-import { createTheme, CssBaseline, ThemeProvider, useMediaQuery } from '@mui/material'
-import type { AppProps } from 'next/app'
-import MenuAppBar from '../components/MenuAppBar'
+import { createTheme, CssBaseline, ThemeProvider, useMediaQuery } from '@mui/material';
+import Toolbar from '@mui/material/Toolbar';
 
+import MenuAppBar from '../components/MenuAppBar';
+
+import type { AppProps } from 'next/app'
 function MyApp({ Component, pageProps }: AppProps) {
   const isDarkMode = useMediaQuery('(prefers-color-scheme: dark)')
   const theme = createTheme({

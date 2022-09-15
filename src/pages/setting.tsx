@@ -1,8 +1,8 @@
 import AddIcon from '@mui/icons-material/Add';
 import ClearIcon from '@mui/icons-material/Clear';
-import { Card, Fab, Fade, Stack } from '@mui/material';
+import { Box, Card, Fab, Fade, Stack, Toolbar } from '@mui/material';
 import { Switcher } from '@prisma/client';
-import React from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useToggle } from 'react-use';
 
 import FunctionSwitchSettingCard, { RefFunctionSwitchSettingCard } from '../components/FunctionSwitchSettingCard';
@@ -26,12 +26,12 @@ export const getServerSideProps: GetServerSideProps<SettingPageProps> = async (c
     ipaddress: "192.168.1.2",
     enabled: false
   },
-  // {
-  //   id: 3,
-  //   name: "piyo",
-  //   ipaddress: "192.168.1.3",
-  //   enabled: true
-  // },
+  {
+    id: 3,
+    name: "piyo",
+    ipaddress: "192.168.1.3",
+    enabled: true
+  },
   {
     id: 4,
     name: "zoon",
@@ -48,35 +48,52 @@ export const getServerSideProps: GetServerSideProps<SettingPageProps> = async (c
 
 const SettingPage: NextPage<SettingPageProps> = ({ switchers }) => {
   const [showNewCard, toggleShowNewCard] = useToggle(false)
+
+  const onDeleteButtonClick = useCallback((id: number) => {
+    console.log(id)
+    if (id === 0) {
+      toggleShowNewCard()
+    }
+  }, [toggleShowNewCard])
+
+  useEffect(() => {
+    if (showNewCard) {
+      window.scrollTo({ top: document.body.scrollHeight, left: 0, behavior: 'smooth' });
+    }
+  }, [showNewCard])
+
   return (
     <Stack>
-      <Fade in={showNewCard} timeout={500}>
-        {showNewCard ?
-          <RefFunctionSwitchSettingCard
-            inputs={{
-              id: 0,
-              name: '',
-              ipaddress: '',
-              enabled: true
-            }}
-          />
-          :
-          <div></div>
-        }
-      </Fade>
       {switchers.map(switcher => (
         <FunctionSwitchSettingCard
           key={switcher.id}
           inputs={switcher}
+          delegate={{
+            onDeleteButtonClick
+          }}
         />
       ))}
+      <Fade in={showNewCard}>
+        <RefFunctionSwitchSettingCard
+          inputs={{
+            id: 0,
+            name: '',
+            ipaddress: '',
+            enabled: true
+          }}
+          delegate={{
+            onDeleteButtonClick
+          }}
+        />
+      </Fade>
       <Fab
         color="primary"
         aria-label="add"
         sx={(theme) => ({
           position: 'fixed',
-          right: theme.spacing(4),
-          bottom: theme.spacing(4),
+          right: theme.spacing(6),
+          bottom: theme.spacing(8),
+          display: showNewCard ? 'none' : 'inherit',
           [theme.breakpoints.up('sm')]: {
             display: 'none',
           }

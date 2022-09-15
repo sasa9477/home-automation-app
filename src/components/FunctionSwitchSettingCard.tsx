@@ -1,5 +1,6 @@
+import CancelIcon from '@mui/icons-material/Cancel';
 import SettingsIcon from '@mui/icons-material/Settings';
-import { Box, Button, Card, FormControlLabel, keyframes, Stack, Switch, TextField, Typography } from '@mui/material';
+import { Box, Button, Card, Fade, FormControlLabel, keyframes, Stack, Switch, TextField, Typography } from '@mui/material';
 import React, { useEffect } from 'react';
 import { useRef } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
@@ -16,22 +17,25 @@ type FormInputs = {
 
 type FunctionSwitchSettingCardProps = {
   inputs: FormInputs,
-  forwardRef?: React.Ref<HTMLDivElement>
+  forwardRef?: React.Ref<HTMLDivElement>,
+  delegate: {
+    onDeleteButtonClick: (id: number) => void
+  }
 }
 
-const FunctionSwitchSettingCard: React.FC<FunctionSwitchSettingCardProps> = ({ inputs, forwardRef }) => {
+const FunctionSwitchSettingCard: React.FC<FunctionSwitchSettingCardProps> = ({ inputs, forwardRef, delegate }) => {
   const isCreateNew = inputs.id === 0;
   const isFirstMount = useFirstMountState();
   const [isEdit, toggleEdit] = useToggle(isCreateNew);
   const nameInputRef = useRef<HTMLInputElement | null>(null);
-  const { control, handleSubmit, formState: { errors } } = useForm<FormInputs>({
+  const { control, handleSubmit, formState: { errors }, reset } = useForm<FormInputs>({
     defaultValues: {
       ...inputs
     }
   })
 
   const onSubmit: SubmitHandler<FormInputs> = async (data) => {
-    await apiClient.switcher.update({ ...data })
+    // await apiClient.switcher.update({ ...data })
     console.log(`submit: ${JSON.stringify(data, null, 2)}`)
     toggleEdit()
   }
@@ -66,7 +70,7 @@ const FunctionSwitchSettingCard: React.FC<FunctionSwitchSettingCardProps> = ({ i
     <Card
       ref={forwardRef}
       tabIndex={0}
-      sx={{ m: 2 }}
+      sx={{ m: 1 }}
     >
       <Stack
         component={"form"}
@@ -106,20 +110,25 @@ const FunctionSwitchSettingCard: React.FC<FunctionSwitchSettingCardProps> = ({ i
             />}
           />
           <Button
-            sx={{ marginLeft: 'auto' }}
+            sx={{
+              display: isCreateNew ? 'none' : undefined,
+              marginLeft: 'auto'
+            }}
             variant='contained'
-            endIcon={<SettingsIcon sx={{
-              animation: `${isFirstMount ? '' : (isEdit ? rotate0animation : rotate90animation)} 1s ease forwards`
-            }} />}
-            disabled={isEdit}
+            endIcon={<SettingsIcon
+              sx={{
+                animation: `${isFirstMount ? '' : (isEdit ? rotate0animation : rotate90animation)} 1s ease forwards`
+              }}
+            />}
             onClick={() => {
+              if (!isEdit && nameInputRef.current) {
+                nameInputRef.current.disabled = false
+                nameInputRef.current.focus()
+              }
               toggleEdit()
-              setTimeout(() => {
-                nameInputRef.current?.focus()
-              }, 100)
             }}
           >
-            編集
+            {!isEdit ? '編集' : '取消'}
           </Button>
         </Box>
         <Controller
@@ -138,7 +147,7 @@ const FunctionSwitchSettingCard: React.FC<FunctionSwitchSettingCardProps> = ({ i
               helperText={errors.name?.message}
               size="small"
               inputRef={nameInputRef}
-              onFocus={(e) => e.currentTarget.setSelectionRange(e.currentTarget.value.length, e.currentTarget.value.length)}
+              onFocus={() => nameInputRef.current?.focus()}
             />
           )}
         />
@@ -146,6 +155,7 @@ const FunctionSwitchSettingCard: React.FC<FunctionSwitchSettingCardProps> = ({ i
           sx={{
             display: 'flex',
             justifyContent: 'space-between',
+            gap: theme => theme.spacing(1)
           }}
         >
           <Controller
@@ -163,6 +173,7 @@ const FunctionSwitchSettingCard: React.FC<FunctionSwitchSettingCardProps> = ({ i
                 {...field}
                 type="text"
                 label="IPアドレス"
+                placeholder='192.168.0.1'
                 inputProps={{
                   inputMode: 'decimal',
                   pattern: '/\b((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}\b/'
@@ -173,7 +184,7 @@ const FunctionSwitchSettingCard: React.FC<FunctionSwitchSettingCardProps> = ({ i
                 size="small"
                 sx={{
                   width: '100%',
-                  marginRight: (theme) => theme.spacing(2)
+                  // marginRight: (theme) => theme.spacing(2)
                 }}
               />
             )}
@@ -183,6 +194,19 @@ const FunctionSwitchSettingCard: React.FC<FunctionSwitchSettingCardProps> = ({ i
               保存
             </Button>
           </div>
+          {/* <div>
+            <Button
+              variant='contained'
+              color='error'
+              disabled={!isEdit}
+              onClick={() => {
+                reset()
+                delegate.onDeleteButtonClick(inputs.id)
+              }}
+            >
+              削除
+            </Button>
+          </div> */}
         </Box>
       </Stack>
     </Card >
@@ -195,7 +219,8 @@ export default FunctionSwitchSettingCard
 // Fade(Mui API)を使用するために HOC(高層コンポーネント)が必要
 // https://mui.com/material-ui/transitions/#child-requirement
 // https://www.gaji.jp/blog/2021/01/08/6247/
-// divを介して refと propsをバケツリレーで渡す必要がある
+// divを介して refと propsをバケツリレーでわたす必要がある
+// divにないプロパティをわたすとエラーになるので、オブジェクトでラップしてわたす
 export const RefFunctionSwitchSettingCard = React.forwardRef<HTMLDivElement, FunctionSwitchSettingCardProps>(
   (props, ref) => {
     return (
