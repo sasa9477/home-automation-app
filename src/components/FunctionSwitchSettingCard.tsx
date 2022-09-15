@@ -1,8 +1,10 @@
+import SettingsIcon from '@mui/icons-material/Settings';
 import { Box, Button, Card, FormControlLabel, keyframes, Stack, Switch, TextField, Typography } from '@mui/material';
-import { useForm, SubmitHandler, Controller } from 'react-hook-form';
-import SettingsIcon from '@mui/icons-material/Settings'
-import { useFirstMountState, useToggle } from 'react-use';
+import React, { useEffect } from 'react';
 import { useRef } from 'react';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import { useFirstMountState, useMount, useToggle } from 'react-use';
+
 import apiClient from '../utils/apiClient';
 
 type FormInputs = {
@@ -12,16 +14,19 @@ type FormInputs = {
   enabled: boolean
 }
 
-type FunctionSwitchSettingCardProps = FormInputs & {
+type FunctionSwitchSettingCardProps = {
+  inputs: FormInputs,
+  forwardRef?: React.Ref<HTMLDivElement>
 }
 
-const FunctionSwitchSettingCard: React.FC<FunctionSwitchSettingCardProps> = (props): JSX.Element => {
+const FunctionSwitchSettingCard: React.FC<FunctionSwitchSettingCardProps> = ({ inputs, forwardRef }) => {
+  const isCreateNew = inputs.id === 0;
   const isFirstMount = useFirstMountState();
-  const [isEdit, toggleEdit] = useToggle(false);
+  const [isEdit, toggleEdit] = useToggle(isCreateNew);
   const nameInputRef = useRef<HTMLInputElement | null>(null);
   const { control, handleSubmit, formState: { errors } } = useForm<FormInputs>({
     defaultValues: {
-      ...props
+      ...inputs
     }
   })
 
@@ -49,8 +54,18 @@ const FunctionSwitchSettingCard: React.FC<FunctionSwitchSettingCardProps> = (pro
     }
   `
 
+  useEffect(() => {
+    if (isCreateNew) {
+      setTimeout(() => {
+        nameInputRef.current?.focus()
+      }, 100)
+    }
+  }, [isCreateNew])
+
   return (
     <Card
+      ref={forwardRef}
+      tabIndex={0}
       sx={{ m: 2 }}
     >
       <Stack
@@ -175,3 +190,17 @@ const FunctionSwitchSettingCard: React.FC<FunctionSwitchSettingCardProps> = (pro
 }
 
 export default FunctionSwitchSettingCard
+
+
+// Fade(Mui API)を使用するために HOC(高層コンポーネント)が必要
+// https://mui.com/material-ui/transitions/#child-requirement
+// https://www.gaji.jp/blog/2021/01/08/6247/
+// divを介して refと propsをバケツリレーで渡す必要がある
+export const RefFunctionSwitchSettingCard = React.forwardRef<HTMLDivElement, FunctionSwitchSettingCardProps>(
+  (props, ref) => {
+    return (
+      <div ref={ref} {...props}>
+        <FunctionSwitchSettingCard {...props} />
+      </div>
+    )
+  })
