@@ -156,6 +156,10 @@ const FunctionSwitchSettingCard: React.FC<FunctionSwitchSettingCardProps> = (pro
                 error={errors.ipaddress !== undefined}
                 helperText={errors.ipaddress?.message}
                 size="small"
+                sx={{
+                  width: '100%',
+                  marginRight: (theme) => theme.spacing(2)
+                }}
               />
             )}
           />
