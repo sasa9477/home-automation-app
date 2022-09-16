@@ -98,7 +98,7 @@ const FunctionSwitchSettingCard: React.FC<FunctionSwitchSettingCardProps> = ({ i
             )}
           />
           <FormControlLabel
-            label="表示"
+            label="有効"
             labelPlacement='start'
             control={<Controller
               name="enabled"
