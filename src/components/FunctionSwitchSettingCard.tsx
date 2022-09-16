@@ -12,7 +12,8 @@ type FormInputs = {
   id: number,
   name: string,
   ipaddress: string,
-  enabled: boolean
+  enabled: boolean,
+  turnOn: boolean
 }
 
 type FunctionSwitchSettingCardProps = {
@@ -146,6 +147,7 @@ const FunctionSwitchSettingCard: React.FC<FunctionSwitchSettingCardProps> = ({ i
                 nameInputRef.current.disabled = false
                 nameInputRef.current.focus()
               }
+              reset()
               toggleEdit()
             }}
           >
@@ -187,48 +189,61 @@ const FunctionSwitchSettingCard: React.FC<FunctionSwitchSettingCardProps> = ({ i
             />
           )}
         />
+        <Controller
+          name="ipaddress"
+          control={control}
+          rules={{
+            required: 'IPアドレスを入力してください',
+            pattern: {
+              value: /\b((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}\b/,
+              message: 'IPアドレス(v4)の形式で入力してください'
+            }
+          }}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              type="text"
+              label="IPアドレス"
+              placeholder='192.168.0.1'
+              inputProps={{
+                inputMode: 'decimal',
+                pattern: '/\b((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}\b/'
+              }}
+              disabled={!isEdit}
+              error={errors.ipaddress !== undefined}
+              helperText={errors.ipaddress?.message}
+              size="small"
+              sx={{
+                width: '100%',
+              }}
+            />
+          )}
+        />
         <Box
           sx={{
             display: 'flex',
-            justifyContent: 'space-between',
-            gap: theme => theme.spacing(1)
+            justifyContent: 'space-between'
           }}
         >
-          <Controller
-            name="ipaddress"
-            control={control}
-            rules={{
-              required: 'IPアドレスを入力してください',
-              pattern: {
-                value: /\b((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}\b/,
-                message: 'IPアドレス(v4)の形式で入力してください'
-              }
-            }}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                type="text"
-                label="IPアドレス"
-                placeholder='192.168.0.1'
-                inputProps={{
-                  inputMode: 'decimal',
-                  pattern: '/\b((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}\b/'
-                }}
-                disabled={!isEdit}
-                error={errors.ipaddress !== undefined}
-                helperText={errors.ipaddress?.message}
-                size="small"
-                sx={{
-                  width: '100%',
-                }}
-              />
-            )}
+          <FormControlLabel
+            label="スイッチON"
+            labelPlacement='start'
+            control={<Controller
+              name="turnOn"
+              control={control}
+              render={({ field }) => (
+                <Switch
+                  color="primary"
+                  checked={field.value}
+                  disabled={!isEdit}
+                  onChange={e => field.onChange(e.target.checked)} />
+              )}
+            />}
           />
           <Button
             variant='contained'
             type="submit"
             disabled={!isEdit}
-            sx={{ height: '40px' }}
           >
             保存
           </Button>

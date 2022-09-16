@@ -15,25 +15,29 @@ export const getServerSideProps: GetServerSideProps<SettingPageProps> = async (c
     id: 1,
     name: "hoge",
     ipaddress: "192.168.1.1",
-    enabled: true
+    enabled: true,
+    turnOn: false
   },
   {
     id: 2,
     name: "fuga",
     ipaddress: "192.168.1.2",
-    enabled: false
+    enabled: false,
+    turnOn: false
   },
   {
     id: 3,
     name: "piyo",
     ipaddress: "192.168.1.3",
-    enabled: true
+    enabled: true,
+    turnOn: false
   },
   {
     id: 4,
     name: "zoon",
     ipaddress: "192.168.1.4",
-    enabled: true
+    enabled: true,
+    turnOn: false
   }]
 
   return {
@@ -95,7 +99,8 @@ const SettingPage: NextPage<SettingPageProps> = ({ switchers }) => {
             id: 0,
             name: '',
             ipaddress: '',
-            enabled: true
+            enabled: true,
+            turnOn: false
           }}
           delegate={{
             onDeleteButtonClick
