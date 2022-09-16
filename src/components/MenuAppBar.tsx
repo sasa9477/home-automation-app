@@ -1,14 +1,18 @@
-import * as React from 'react';
-import { AppBar, Toolbar, Typography, IconButton, MenuItem, Menu, MenuItemProps } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
+import { AppBar, Button, IconButton, Menu, Toolbar, Typography } from '@mui/material';
 import Link from 'next/link';
-import { forwardRef } from 'react';
+import { useRouter } from 'next/router';
+import * as React from 'react';
+
 import LinkMenuItem from './LinkMenuItem';
+import { useMyAppContext } from './MyAppContextProvider';
 
 type MenuAppBarProps = {
 }
 
 const MenuAppBar: React.FC<MenuAppBarProps> = (): JSX.Element => {
+  const { setShownNewCard } = useMyAppContext()
+
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -18,6 +22,9 @@ const MenuAppBar: React.FC<MenuAppBarProps> = (): JSX.Element => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const router = useRouter()
+  const isShownAppBarButton = ['/', '/setting'].includes(router.pathname)
 
   const menuList = [
     {
@@ -73,9 +80,19 @@ const MenuAppBar: React.FC<MenuAppBarProps> = (): JSX.Element => {
             ))}
           </Menu>
         </div>
-        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-          Home Automation App
-        </Typography>
+        <Link href={'/'}>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            Home Automation App
+          </Typography>
+        </Link>
+        <Button
+          sx={{
+            display: isShownAppBarButton ? undefined : 'none'
+          }}
+          onClick={() => setShownNewCard(true)}
+        >
+          追加
+        </Button>
       </Toolbar>
     </AppBar>
   );

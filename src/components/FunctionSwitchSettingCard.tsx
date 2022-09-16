@@ -1,12 +1,12 @@
-import CancelIcon from '@mui/icons-material/Cancel';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { Box, Button, Card, Fade, FormControlLabel, keyframes, Stack, Switch, TextField, Typography } from '@mui/material';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRef } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { useFirstMountState, useMount, useToggle } from 'react-use';
 
 import apiClient from '../utils/apiClient';
+import { useMyAppContext } from './MyAppContextProvider';
 
 type FormInputs = {
   id: number,
@@ -16,23 +16,28 @@ type FormInputs = {
 }
 
 type FunctionSwitchSettingCardProps = {
-  inputs: FormInputs,
+  input: FormInputs,
   forwardRef?: React.Ref<HTMLDivElement>,
   delegate: {
     onDeleteButtonClick: (id: number) => void
   }
 }
 
-const FunctionSwitchSettingCard: React.FC<FunctionSwitchSettingCardProps> = ({ inputs, forwardRef, delegate }) => {
-  const isCreateNew = inputs.id === 0;
-  const isFirstMount = useFirstMountState();
+const FunctionSwitchSettingCard: React.FC<FunctionSwitchSettingCardProps> = ({ input: input, forwardRef, delegate }) => {
+  const isCreateNew = input.id === 0;
+  const isFirstRenderRef = useRef(true)
+  const { setShownNewCard } = useMyAppContext()
   const [isEdit, toggleEdit] = useToggle(isCreateNew);
   const nameInputRef = useRef<HTMLInputElement | null>(null);
-  const { control, handleSubmit, formState: { errors }, reset } = useForm<FormInputs>({
+  const { formState: { errors }, control, watch, handleSubmit, reset } = useForm<FormInputs>({
     defaultValues: {
-      ...inputs
-    }
+      ...input
+    },
   })
+
+  const updateSwitcher = (enabled: boolean) => {
+    console.log(`id: ${input.id} enabled: ${enabled}`)
+  }
 
   const onSubmit: SubmitHandler<FormInputs> = async (data) => {
     // await apiClient.switcher.update({ ...data })
@@ -58,14 +63,6 @@ const FunctionSwitchSettingCard: React.FC<FunctionSwitchSettingCardProps> = ({ i
     }
   `
 
-  useEffect(() => {
-    if (isCreateNew) {
-      setTimeout(() => {
-        nameInputRef.current?.focus()
-      }, 100)
-    }
-  }, [isCreateNew])
-
   return (
     <Card
       ref={forwardRef}
@@ -73,8 +70,9 @@ const FunctionSwitchSettingCard: React.FC<FunctionSwitchSettingCardProps> = ({ i
       sx={{ m: 1 }}
     >
       <Stack
-        component={"form"}
+        component="form"
         noValidate
+        autoComplete="off"
         onSubmit={handleSubmit(onSubmit)}
         spacing={2}
         sx={{ m: 2 }}
@@ -90,11 +88,11 @@ const FunctionSwitchSettingCard: React.FC<FunctionSwitchSettingCardProps> = ({ i
             name="id"
             control={control}
             render={({ field }) => (
-              <Typography>{field.value}</Typography>
+              <Typography>{field.value ? field.value : ''}</Typography>
             )}
           />
           <FormControlLabel
-            label="有効"
+            label="表示"
             labelPlacement='start'
             control={<Controller
               name="enabled"
@@ -103,21 +101,38 @@ const FunctionSwitchSettingCard: React.FC<FunctionSwitchSettingCardProps> = ({ i
                 <Switch
                   color="primary"
                   checked={field.value}
-                  disabled={!isEdit}
-                  onChange={e => field.onChange(e.target.checked)}
+                  onChange={e => {
+                    field.onChange(e.target.checked)
+                    updateSwitcher(e.target.checked)
+                  }}
                 />
               )}
             />}
           />
+          <Fade in={!isCreateNew && isEdit}>
+            <Button
+              variant='contained'
+              color='error'
+              sx={{
+                marginLeft: 'auto'
+              }}
+              onClick={() => {
+                reset()
+                delegate.onDeleteButtonClick(input.id)
+              }}
+            >
+              削除
+            </Button>
+          </Fade>
           <Button
             sx={{
               display: isCreateNew ? 'none' : undefined,
-              marginLeft: 'auto'
+              marginLeft: theme => theme.spacing(1)
             }}
             variant='contained'
             endIcon={<SettingsIcon
               sx={{
-                animation: `${isFirstMount ? '' : (isEdit ? rotate0animation : rotate90animation)} 1s ease forwards`
+                animation: `${isFirstRenderRef.current ? '' : (isEdit ? rotate0animation : rotate90animation)} 0.3s ease forwards`
               }}
             />}
             onClick={() => {
@@ -129,6 +144,19 @@ const FunctionSwitchSettingCard: React.FC<FunctionSwitchSettingCardProps> = ({ i
             }}
           >
             {!isEdit ? '編集' : '取消'}
+          </Button>
+          <Button
+            sx={{
+              display: isCreateNew ? undefined : 'none',
+              marginLeft: 'auto'
+            }}
+            color='error'
+            variant='contained'
+            onClick={() => {
+              setShownNewCard(false)
+            }}
+          >
+            取消
           </Button>
         </Box>
         <Controller
@@ -143,6 +171,7 @@ const FunctionSwitchSettingCard: React.FC<FunctionSwitchSettingCardProps> = ({ i
               type="text"
               label="名前"
               disabled={!isEdit}
+              inputProps={{ spellCheck: false }}
               error={errors.name !== undefined}
               helperText={errors.name?.message}
               size="small"
@@ -184,29 +213,18 @@ const FunctionSwitchSettingCard: React.FC<FunctionSwitchSettingCardProps> = ({ i
                 size="small"
                 sx={{
                   width: '100%',
-                  // marginRight: (theme) => theme.spacing(2)
                 }}
               />
             )}
           />
-          <div>
-            <Button variant='contained' type="submit" disabled={!isEdit}>
-              保存
-            </Button>
-          </div>
-          {/* <div>
-            <Button
-              variant='contained'
-              color='error'
-              disabled={!isEdit}
-              onClick={() => {
-                reset()
-                delegate.onDeleteButtonClick(inputs.id)
-              }}
-            >
-              削除
-            </Button>
-          </div> */}
+          <Button
+            variant='contained'
+            type="submit"
+            disabled={!isEdit}
+            sx={{ height: '40px' }}
+          >
+            保存
+          </Button>
         </Box>
       </Stack>
     </Card >

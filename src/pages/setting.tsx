@@ -1,14 +1,11 @@
-import AddIcon from '@mui/icons-material/Add';
-import ClearIcon from '@mui/icons-material/Clear';
-import { Box, Card, Fab, Fade, Stack, Toolbar } from '@mui/material';
+import { Fade, Stack } from '@mui/material';
 import { Switcher } from '@prisma/client';
-import React, { useCallback, useEffect } from 'react';
-import { useToggle } from 'react-use';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import FunctionSwitchSettingCard, { RefFunctionSwitchSettingCard } from '../components/FunctionSwitchSettingCard';
+import { useMyAppContext } from '../components/MyAppContextProvider';
 
 import type { GetServerSideProps, NextPage } from 'next'
-
 type SettingPageProps = {
   switchers: Switcher[]
 }
@@ -47,35 +44,54 @@ export const getServerSideProps: GetServerSideProps<SettingPageProps> = async (c
 }
 
 const SettingPage: NextPage<SettingPageProps> = ({ switchers }) => {
-  const [showNewCard, toggleShowNewCard] = useToggle(false)
+  const { shownNewCard } = useMyAppContext()
+  const [shownFade, setShownFade] = useState(false)
+  const cardRef = useRef<HTMLDivElement | null>(null)
 
   const onDeleteButtonClick = useCallback((id: number) => {
     console.log(id)
-    if (id === 0) {
-      toggleShowNewCard()
-    }
-  }, [toggleShowNewCard])
+  }, [])
 
   useEffect(() => {
-    if (showNewCard) {
+    if (shownNewCard) {
+      setShownFade(true)
+    } else {
+      if (cardRef.current) {
+        const scrollHeight = cardRef.current.clientHeight * -1
+        window.scrollBy({ top: scrollHeight, left: 0, behavior: 'smooth' });
+      }
+      setTimeout(() => {
+        setShownFade(false)
+      }, 300)
+    }
+  }, [shownNewCard, setShownFade])
+
+  useEffect(() => {
+    if (shownFade) {
       window.scrollTo({ top: document.body.scrollHeight, left: 0, behavior: 'smooth' });
     }
-  }, [showNewCard])
+  }, [shownFade])
 
   return (
     <Stack>
       {switchers.map(switcher => (
         <FunctionSwitchSettingCard
           key={switcher.id}
-          inputs={switcher}
+          input={switcher}
           delegate={{
             onDeleteButtonClick
           }}
         />
       ))}
-      <Fade in={showNewCard}>
+      <Fade
+        in={shownNewCard}
+        style={{
+          display: shownFade ? undefined : 'none',
+          transitionDelay: shownNewCard ? '100ms' : '0ms'
+        }}
+      >
         <RefFunctionSwitchSettingCard
-          inputs={{
+          input={{
             id: 0,
             name: '',
             ipaddress: '',
@@ -84,23 +100,9 @@ const SettingPage: NextPage<SettingPageProps> = ({ switchers }) => {
           delegate={{
             onDeleteButtonClick
           }}
+          ref={cardRef}
         />
       </Fade>
-      <Fab
-        color="primary"
-        aria-label="add"
-        sx={(theme) => ({
-          position: 'fixed',
-          right: theme.spacing(6),
-          bottom: theme.spacing(8),
-          display: showNewCard ? 'none' : 'inherit',
-          [theme.breakpoints.up('sm')]: {
-            display: 'none',
-          }
-        })}
-        onClick={() => toggleShowNewCard()}>
-        {showNewCard ? <ClearIcon /> : <AddIcon />}
-      </Fab>
     </Stack>
   )
 }
