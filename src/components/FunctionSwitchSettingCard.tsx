@@ -25,7 +25,7 @@ type FunctionSwitchSettingCardProps = {
 
 const FunctionSwitchSettingCard: React.FC<FunctionSwitchSettingCardProps> = ({ input: input, forwardRef, delegate }) => {
   const isCreateNew = input.id === 0;
-  const isFirstRenderRef = useRef(true)
+  const isFirstMount = useFirstMountState()
   const { setShownNewCard } = useMyAppContext()
   const [isEdit, toggleEdit] = useToggle(isCreateNew);
   const nameInputRef = useRef<HTMLInputElement | null>(null);
@@ -132,7 +132,7 @@ const FunctionSwitchSettingCard: React.FC<FunctionSwitchSettingCardProps> = ({ i
             variant='contained'
             endIcon={<SettingsIcon
               sx={{
-                animation: `${isFirstRenderRef.current ? '' : (isEdit ? rotate0animation : rotate90animation)} 0.3s ease forwards`
+                animation: `${isFirstMount ? '' : (isEdit ? rotate0animation : rotate90animation)} 0.3s ease forwards`
               }}
             />}
             onClick={() => {
