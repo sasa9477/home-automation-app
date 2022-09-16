@@ -153,6 +153,7 @@ const FunctionSwitchSettingCard: React.FC<FunctionSwitchSettingCardProps> = ({ i
             color='error'
             variant='contained'
             onClick={() => {
+              reset()
               setShownNewCard(false)
             }}
           >
