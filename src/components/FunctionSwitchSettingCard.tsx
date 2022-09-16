@@ -29,20 +29,26 @@ const FunctionSwitchSettingCard: React.FC<FunctionSwitchSettingCardProps> = ({ i
   const { setShownNewCard } = useMyAppContext()
   const [isEdit, toggleEdit] = useToggle(isCreateNew);
   const nameInputRef = useRef<HTMLInputElement | null>(null);
-  const { formState: { errors }, control, watch, handleSubmit, reset } = useForm<FormInputs>({
+  const { formState: { errors }, control, handleSubmit, reset } = useForm<FormInputs>({
     defaultValues: {
       ...input
     },
   })
 
-  const updateSwitcher = (enabled: boolean) => {
+  const onChangeEnableSwitch = async (enabled: boolean) => {
     console.log(`id: ${input.id} enabled: ${enabled}`)
+    await apiClient.switcher.update({ id: input.id, enabled })
   }
 
   const onSubmit: SubmitHandler<FormInputs> = async (data) => {
-    // await apiClient.switcher.update({ ...data })
     console.log(`submit: ${JSON.stringify(data, null, 2)}`)
     toggleEdit()
+
+    if (isCreateNew) {
+      await apiClient.switcher.create({ ...data })
+    } else {
+      await apiClient.switcher.update({ ...data })
+    }
   }
 
   const rotate0animation = keyframes`
@@ -103,7 +109,7 @@ const FunctionSwitchSettingCard: React.FC<FunctionSwitchSettingCardProps> = ({ i
                   checked={field.value}
                   onChange={e => {
                     field.onChange(e.target.checked)
-                    updateSwitcher(e.target.checked)
+                    onChangeEnableSwitch(e.target.checked)
                   }}
                 />
               )}
