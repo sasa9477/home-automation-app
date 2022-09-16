@@ -12,6 +12,7 @@ model Switcher {
   name      String
   ipaddress String  @unique
   enabled   Boolean @default(false)
+  turnOn    Boolean @default(false)
 }
 
 model Log {

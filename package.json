@@ -7,8 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "prisma-generate": "npx prisma version && npx prisma format && npx prisma generate",
-    "prisma-migrate": "npx prisma migrate dev --name"
+    "prisma-generate": "yarn prisma version && yarn prisma format && yarn prisma generate",
+    "prisma-migrate": "yarn prisma migrate dev --name",
+    "prisma-push": "yarn prisma db push --accept-data-loss"
   },
   "dependencies": {
     "@emotion/react": "^11.10.4",
