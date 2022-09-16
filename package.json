@@ -9,7 +9,9 @@
     "lint": "next lint",
     "prisma-generate": "yarn prisma version && yarn prisma format && yarn prisma generate",
     "prisma-migrate": "yarn prisma migrate dev --name",
-    "prisma-push": "yarn prisma db push --accept-data-loss"
+    "prisma-push": "yarn prisma db push --accept-data-loss",
+    "prisma-studio": "yarn prisma studio",
+    "prisma-seed": "node script/prisma-seed.js"
   },
   "dependencies": {
     "@emotion/react": "^11.10.4",
