@@ -9,7 +9,6 @@ const handler: NextApiHandler<SwitcherGetResponse> = async (req, res) => {
       id: 'asc',
     },
   });
-  console.log(switchers);
   res.status(200).json(switchers);
 };
 

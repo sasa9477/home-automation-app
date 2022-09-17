@@ -7,7 +7,7 @@ import SwitchSettingCard, { SwitchSettingCardProps } from './SwitchSettingCard';
 // https://www.gaji.jp/blog/2021/01/08/6247/
 // divを介して refと propsをバケツリレーでわたす必要がある
 // divにないプロパティをわたすとエラーになるので、オブジェクトでラップしてわたす
-export const SwitchSettingCardRef = forwardRef<HTMLDivElement, SwitchSettingCardProps>(
+const SwitchSettingCardRef = forwardRef<HTMLDivElement, SwitchSettingCardProps>(
   (props, ref) => {
     return (
       <div ref={ref} {...props}>
@@ -15,3 +15,5 @@ export const SwitchSettingCardRef = forwardRef<HTMLDivElement, SwitchSettingCard
       </div>
     )
   })
+
+export default SwitchSettingCardRef

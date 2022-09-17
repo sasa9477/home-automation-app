@@ -8,7 +8,7 @@ import { useFirstMountState, useMount, useToggle } from 'react-use';
 import apiClient from '../utils/apiClient';
 import { useMyAppContext } from './MyAppContextProvider';
 
-type FormInputs = {
+export type FormInput = {
   id: number,
   name: string,
   ipaddress: string,
@@ -17,39 +17,42 @@ type FormInputs = {
 }
 
 export type SwitchSettingCardProps = {
-  input: FormInputs,
+  input: FormInput,
   forwardRef?: React.Ref<HTMLDivElement>,
   delegate: {
+    onSaveButtonClick: (input: FormInput) => void,
     onDeleteButtonClick: (id: number) => void
   }
 }
 
-const SwitchSettingCard: React.FC<SwitchSettingCardProps> = ({ input: input, forwardRef, delegate }) => {
+const SwitchSettingCard: React.FC<SwitchSettingCardProps> = ({ input, forwardRef, delegate }) => {
   const isCreateNew = input.id === 0;
   const isFirstMount = useFirstMountState()
   const { setShownNewCard } = useMyAppContext()
   const [isEdit, toggleEdit] = useToggle(isCreateNew);
   const nameInputRef = useRef<HTMLInputElement | null>(null);
-  const { formState: { errors }, control, handleSubmit, reset } = useForm<FormInputs>({
+  const { formState: { errors }, control, handleSubmit, reset } = useForm<FormInput>({
     defaultValues: {
       ...input
     },
   })
 
   const onChangeEnableSwitch = async (enabled: boolean) => {
-    console.log(`id: ${input.id} enabled: ${enabled}`)
-    await apiClient.switcher.update({ id: input.id, enabled })
+    if (!isCreateNew) {
+      await apiClient.switcher.update({ id: input.id, enabled })
+    }
   }
 
-  const onSubmit: SubmitHandler<FormInputs> = async (data) => {
-    console.log(`submit: ${JSON.stringify(data, null, 2)}`)
-    toggleEdit()
-
-    if (isCreateNew) {
-      await apiClient.switcher.create({ ...data })
+  const onSubmit = async (data: FormInput) => {
+    if (!isCreateNew) {
+      toggleEdit()
     } else {
-      await apiClient.switcher.update({ ...data })
+      setTimeout(() => {
+        setShownNewCard(false)
+        reset()
+      }, 300)
     }
+    await delegate.onSaveButtonClick(data)
   }
 
   const rotate0animation = keyframes`
