@@ -3,6 +3,7 @@ import { AppBar, Button, IconButton, Menu, Toolbar, Typography } from '@mui/mate
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import * as React from 'react';
+import { useCallback } from 'react';
 
 import LinkMenuItem from './LinkMenuItem';
 import { useMyAppContext } from './MyAppContextProvider';
@@ -25,6 +26,17 @@ const MenuAppBar: React.FC<MenuAppBarProps> = (): JSX.Element => {
 
   const router = useRouter()
   const isShownAppBarButton = ['/', '/setting'].includes(router.pathname)
+
+  const onAppBarButtonClick = useCallback(() => {
+    switch (router.pathname) {
+      case '/':
+        return router.push('/setting')
+      case '/setting':
+        return setShownNewCard(true)
+      default:
+        break;
+    }
+  }, [router, setShownNewCard])
 
   const menuList = [
     {
@@ -89,7 +101,7 @@ const MenuAppBar: React.FC<MenuAppBarProps> = (): JSX.Element => {
           sx={{
             display: isShownAppBarButton ? undefined : 'none'
           }}
-          onClick={() => setShownNewCard(true)}
+          onClick={onAppBarButtonClick}
         >
           追加
         </Button>
