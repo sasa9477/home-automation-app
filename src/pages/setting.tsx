@@ -17,48 +17,39 @@ const SettingPage: NextPage<SettingPageProps> = ({ }) => {
   const { shownNewCard, setShownNewCard } = useMyAppContext()
   const [shownNewCardArea, setShownNewCardArea] = useState(false)
   const [fadeNewCard, setFadeNewCard] = useState(false)
-  const cardRef = useRef<HTMLDivElement | null>(null)
+  const newCardRef = useRef<HTMLDivElement | null>(null)
   const [switchers, setSwitchers] = useState<Switcher[]>([])
 
-  const onSaveButtonClick = useCallback(async (data: FormInput) => {
-    console.log(`submit: ${JSON.stringify(data, null, 2)}`)
-    if (data.id === 0) {
-      // remove id value from data
-      const { id, ...req } = data
-      await apiClient.switcher.create({ ...req })
-
-      const res = await apiClient.switcher.get()
-      if (res.status === 200) {
-        setSwitchers(res.data)
-      }
-      setShownNewCard(false)
-    } else {
-      await apiClient.switcher.update({ ...data })
-
-      const res = await apiClient.switcher.get()
-      if (res.status === 200) {
-        setSwitchers(res.data)
-      }
-    }
-  }, [setShownNewCard])
-
-  const onDeleteButtonClick = useCallback(async (id: number) => {
-    console.log(id)
-    await apiClient.switcher.delete({ id: id })
-
+  const loadSwitchers = useCallback(async () => {
     const res = await apiClient.switcher.get()
     if (res.status === 200) {
       setSwitchers(res.data)
     }
-  }, [])
+  }, [setSwitchers])
+
+  const onSaveButtonClick = useCallback(async (data: FormInput) => {
+    if (data.id === 0) {
+      // remove id value from data
+      const { id, ...req } = data
+      await apiClient.switcher.create({ ...req })
+      setShownNewCard(false)
+    } else {
+      await apiClient.switcher.update({ ...data })
+    }
+    await loadSwitchers()
+  }, [setShownNewCard, loadSwitchers])
+
+  const onDeleteButtonClick = useCallback(async (id: number) => {
+    await apiClient.switcher.delete({ id: id })
+    await loadSwitchers()
+  }, [loadSwitchers])
 
   const onCancelNewCardButtonClick = useCallback(() => {
     // scroll up and hide on cancel
-    if (cardRef.current) {
-      const scrollHeight = cardRef.current.clientHeight * -1
+    if (newCardRef.current) {
+      const scrollHeight = newCardRef.current.clientHeight * -1
       window.scrollBy({ top: scrollHeight, left: 0, behavior: 'smooth' });
     }
-    // setFadeNewCard(false)
     setShownNewCard(false)
   }, [setShownNewCard])
 
@@ -67,7 +58,7 @@ const SettingPage: NextPage<SettingPageProps> = ({ }) => {
       // appear new card
       setFadeNewCard(true)
       setTimeout(() => {
-        window.scrollTo({ top: document.body.scrollHeight, left: 0, behavior: 'smooth' });
+        newCardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
       }, 100)
     } else {
       // hide new card
@@ -127,7 +118,7 @@ const SettingPage: NextPage<SettingPageProps> = ({ }) => {
             onDeleteButtonClick,
             onCancelNewCardButtonClick
           }}
-          ref={cardRef}
+          ref={newCardRef}
         />
       </Fade>
     </Stack>
