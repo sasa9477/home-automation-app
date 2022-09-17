@@ -3,11 +3,11 @@ import { Switcher } from '@prisma/client';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useMyAppContext } from '../components/MyAppContextProvider';
-import SwitchSettingCard, { SwitchSettingCardRef } from '../components/SwitchSettingCard';
+import SwitchSettingCard from '../components/SwitchSettingCard';
+import { SwitchSettingCardRef } from '../components/SwitchSettingCardRef';
 import { prismaClient } from '../utils/prismaClient';
 
 import type { GetServerSideProps, NextPage } from 'next'
-
 type SettingPageProps = {
   switchers: Switcher[]
 }
