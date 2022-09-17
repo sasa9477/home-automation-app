@@ -8,11 +8,13 @@ datasource db {
 }
 
 model Switcher {
-  id        Int     @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   name      String
-  ipaddress String  @unique
-  enabled   Boolean @default(false)
-  turnOn    Boolean @default(false)
+  ipaddress String   @unique
+  enabled   Boolean  @default(true)
+  turnOn    Boolean  @default(false)
+  createdAt DateTime @default(now()) @map(name: "created_at")
+  updatedAt DateTime @updatedAt @map(name: "updated_at")
 }
 
 model Log {
