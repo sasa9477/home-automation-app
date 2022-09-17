@@ -21,7 +21,8 @@ export type SwitchSettingCardProps = {
   forwardRef?: React.Ref<HTMLDivElement>,
   delegate: {
     onSaveButtonClick: (input: FormInput) => void,
-    onDeleteButtonClick: (id: number) => void
+    onDeleteButtonClick: (id: number) => void,
+    onCancelNewCardButtonClick: () => void
   }
 }
 
@@ -46,13 +47,14 @@ const SwitchSettingCard: React.FC<SwitchSettingCardProps> = ({ input, forwardRef
   const onSubmit = async (data: FormInput) => {
     if (!isCreateNew) {
       toggleEdit()
+      await delegate.onSaveButtonClick(data)
     } else {
-      setTimeout(() => {
+      await delegate.onSaveButtonClick(data)
+      setTimeout(async () => {
         setShownNewCard(false)
         reset()
       }, 300)
     }
-    await delegate.onSaveButtonClick(data)
   }
 
   const rotate0animation = keyframes`
@@ -166,6 +168,7 @@ const SwitchSettingCard: React.FC<SwitchSettingCardProps> = ({ input, forwardRef
             onClick={() => {
               reset()
               setShownNewCard(false)
+              delegate.onCancelNewCardButtonClick()
             }}
           >
             取消
