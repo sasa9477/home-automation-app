@@ -109,18 +109,19 @@ const main = async () => {
     const result = await transfer();
     console.log(colors.green(`Created ${result.length}columns.`));
   } catch (e) {
-    console.error(colors.red('An error occurred.'));
     console.error(colors.red(e.message));
 
+    console.log(colors.yellow('Data already exits.'));
     const answer = await prompt(colors.yellow('Delete all data and try seeding again? (y/n) '));
     if (answer.trim().toLowerCase() === 'y') {
       const deleteAllDataResult = await deleteAllData();
       const deleteCount = deleteAllDataResult
         .flatMap((table) => (table.count ? table.count : 0))
         .reduce((sum, count) => (sum += count));
-      console.log(colors.red(`Delete ${deleteCount} columns.`));
 
       const result = await transfer();
+
+      console.log(colors.red(`Delete ${deleteCount} columns.`));
       console.log(colors.green(`Created ${result.length} columns.`));
     }
   }
