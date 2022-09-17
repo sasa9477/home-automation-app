@@ -18,6 +18,7 @@ const SettingPage: NextPage<SettingPageProps> = ({ }) => {
   const [shownNewCardArea, setShownNewCardArea] = useState(false)
   const [fadeNewCard, setFadeNewCard] = useState(false)
   const newCardRef = useRef<HTMLDivElement | null>(null)
+  const loadingRef = useRef(true);
   const [switchers, setSwitchers] = useState<Switcher[]>([])
 
   const loadSwitchers = useCallback(async () => {
@@ -81,6 +82,7 @@ const SettingPage: NextPage<SettingPageProps> = ({ }) => {
       const res = await apiClient.switcher.get()
       if (res.status === 200) {
         setSwitchers(res.data)
+        loadingRef.current = false
       }
     })()
   })
@@ -98,7 +100,7 @@ const SettingPage: NextPage<SettingPageProps> = ({ }) => {
           }}
         />
       ))}
-      {switchers.length === 0 &&
+      {!loadingRef.current && switchers.length === 0 &&
         <Typography sx={{ alignSelf: 'center' }}>
           データがありません
         </Typography>
