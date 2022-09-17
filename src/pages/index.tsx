@@ -11,7 +11,7 @@ type HomePageProps = {
 }
 
 export const getServerSideProps: GetServerSideProps<HomePageProps> = async (context) => {
-  const switchers = await prismaClient.switcher.findMany({
+  const data = await prismaClient.switcher.findMany({
     where: {
       enabled: true
     },
@@ -19,6 +19,9 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async (cont
       id: 'asc'
     }
   })
+  // Date型のシリアライズに失敗するので置きなおす
+  // https://github.com/vercel/next.js/issues/11993
+  const switchers = JSON.parse(JSON.stringify(data))
 
   return {
     props: {
