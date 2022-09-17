@@ -4,41 +4,23 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import FunctionSwitchSettingCard, { RefFunctionSwitchSettingCard } from '../components/FunctionSwitchSettingCard';
 import { useMyAppContext } from '../components/MyAppContextProvider';
+import { prismaClient } from '../utils/prismaClient';
 
 import type { GetServerSideProps, NextPage } from 'next'
+
 type SettingPageProps = {
   switchers: Switcher[]
 }
 
 export const getServerSideProps: GetServerSideProps<SettingPageProps> = async (context) => {
-  const switchers: Switcher[] = [{
-    id: 1,
-    name: "hoge",
-    ipaddress: "192.168.1.1",
-    enabled: true,
-    turnOn: false
-  },
-  {
-    id: 2,
-    name: "fuga",
-    ipaddress: "192.168.1.2",
-    enabled: false,
-    turnOn: false
-  },
-  {
-    id: 3,
-    name: "piyo",
-    ipaddress: "192.168.1.3",
-    enabled: true,
-    turnOn: false
-  },
-  {
-    id: 4,
-    name: "zoon",
-    ipaddress: "192.168.1.4",
-    enabled: true,
-    turnOn: false
-  }]
+  const switchers = await prismaClient.switcher.findMany({
+    where: {
+      enabled: true
+    },
+    orderBy: {
+      id: 'asc'
+    }
+  })
 
   return {
     props: {

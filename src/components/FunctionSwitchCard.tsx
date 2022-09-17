@@ -1,11 +1,20 @@
-import { Card, FormControlLabel, Switch, Typography } from "@mui/material"
+import { Card, FormControlLabel, Switch, Typography } from '@mui/material';
+import React, { EventHandler, ReactElement, useCallback } from 'react';
+
+import apiClient from '../utils/apiClient';
+import { prismaClient } from '../utils/prismaClient';
 
 type FunctionSwitchCardProps = {
-  checked?: boolean;
-  label: React.ReactNode;
+  id: number;
+  label: string;
+  turnOn?: boolean;
 }
 
-const FunctionSwitchCard: React.FC<FunctionSwitchCardProps> = (props): JSX.Element => {
+const FunctionSwitchCard: React.FC<FunctionSwitchCardProps> = ({ id, label, turnOn }): JSX.Element => {
+  const onChnageSwitch = useCallback(async (checked: boolean) => {
+    await apiClient.switcher.update({ id, turnOn: checked })
+  }, [id])
+
   return (
     <Card
       sx={{
@@ -14,12 +23,13 @@ const FunctionSwitchCard: React.FC<FunctionSwitchCardProps> = (props): JSX.Eleme
       <FormControlLabel
         label={
           <Typography paddingLeft={1} noWrap>
-            {props.label}
+            {label}
           </Typography >
         }
         labelPlacement='start'
         control={< Switch color="primary" />}
-        checked={props.checked}
+        checked={turnOn}
+        onChange={(_, checked) => onChnageSwitch(checked)}
         sx={{
           width: '100%',
           margin: 0,
