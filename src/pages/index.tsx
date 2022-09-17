@@ -1,4 +1,4 @@
-import { Stack } from '@mui/material';
+import { Stack, Typography } from '@mui/material';
 import { Switcher } from '@prisma/client';
 
 import SwitchCard from '../components/SwitchCard';
@@ -44,6 +44,11 @@ const Home: NextPage<HomePageProps> = ({ switchers }) => {
           id={switcher.id}
           label={switcher.name} />
       ))}
+      {switchers.length === 0 &&
+        <Typography sx={{ alignSelf: 'center' }}>
+          データがありません
+        </Typography>
+      }
     </Stack >
   )
 }

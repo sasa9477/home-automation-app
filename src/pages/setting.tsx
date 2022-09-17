@@ -1,4 +1,4 @@
-import { Fade, Stack } from '@mui/material';
+import { Fade, Stack, Typography } from '@mui/material';
 import { Switcher } from '@prisma/client';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useMount } from 'react-use';
@@ -98,6 +98,11 @@ const SettingPage: NextPage<SettingPageProps> = ({ }) => {
           }}
         />
       ))}
+      {switchers.length === 0 &&
+        <Typography sx={{ alignSelf: 'center' }}>
+          データがありません
+        </Typography>
+      }
       <Fade
         in={fadeNewCard}
         style={{
