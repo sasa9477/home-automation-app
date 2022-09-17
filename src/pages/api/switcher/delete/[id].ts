@@ -1,9 +1,10 @@
 import { NextApiHandler } from 'next';
+
 import { SwitcherDeleteRequest, SwitcherDeleteResponse } from '../../../../interfaces';
 import { prismaClient } from '../../../../utils/prismaClient';
 
 const handler: NextApiHandler<SwitcherDeleteResponse> = async (req, res) => {
-  const { queryId } = req.query;
+  const { id: queryId } = req.query;
   const id = Number(queryId);
 
   if (!id) {
@@ -13,18 +14,12 @@ const handler: NextApiHandler<SwitcherDeleteResponse> = async (req, res) => {
 
   // TODO: secure api = use session
 
-  try {
-    await prismaClient.switcher.delete({
-      where: {
-        id: id,
-      },
-    });
-    res.status(200).end();
-  } catch (e) {
-    if (e instanceof Error) {
-      res.status(500).json({ errorMessage: e.message });
-    }
-  }
+  await prismaClient.switcher.delete({
+    where: {
+      id: id,
+    },
+  });
+  res.status(200).end();
 };
 
 export default handler;
