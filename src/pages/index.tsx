@@ -1,7 +1,7 @@
 import { Stack } from '@mui/material';
 import { Switcher } from '@prisma/client';
 
-import FunctionSwitchCard from '../components/FunctionSwitchCard';
+import SwitchCard from '../components/SwitchCard';
 import { prismaClient } from '../utils/prismaClient';
 
 import type { GetServerSideProps, NextPage } from 'next'
@@ -36,7 +36,7 @@ const Home: NextPage<HomePageProps> = ({ switchers }) => {
         rowGap: 2,
       }}>
       {switchers.map((switcher) => (
-        <FunctionSwitchCard
+        <SwitchCard
           key={switcher.id}
           id={switcher.id}
           label={switcher.name} />

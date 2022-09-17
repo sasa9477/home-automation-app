@@ -2,8 +2,8 @@ import { Fade, Stack } from '@mui/material';
 import { Switcher } from '@prisma/client';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-import FunctionSwitchSettingCard, { RefFunctionSwitchSettingCard } from '../components/FunctionSwitchSettingCard';
 import { useMyAppContext } from '../components/MyAppContextProvider';
+import SwitchSettingCard, { SwitchSettingCardRef } from '../components/SwitchSettingCard';
 import { prismaClient } from '../utils/prismaClient';
 
 import type { GetServerSideProps, NextPage } from 'next'
@@ -61,7 +61,7 @@ const SettingPage: NextPage<SettingPageProps> = ({ switchers }) => {
   return (
     <Stack>
       {switchers.map(switcher => (
-        <FunctionSwitchSettingCard
+        <SwitchSettingCard
           key={switcher.id}
           input={switcher}
           delegate={{
@@ -76,7 +76,7 @@ const SettingPage: NextPage<SettingPageProps> = ({ switchers }) => {
           transitionDelay: shownNewCard ? '100ms' : '0ms'
         }}
       >
-        <RefFunctionSwitchSettingCard
+        <SwitchSettingCardRef
           input={{
             id: 0,
             name: '',

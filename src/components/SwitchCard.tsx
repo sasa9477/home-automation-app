@@ -4,13 +4,13 @@ import React, { EventHandler, ReactElement, useCallback } from 'react';
 import apiClient from '../utils/apiClient';
 import { prismaClient } from '../utils/prismaClient';
 
-type FunctionSwitchCardProps = {
+type SwitchCardProps = {
   id: number;
   label: string;
   turnOn?: boolean;
 }
 
-const FunctionSwitchCard: React.FC<FunctionSwitchCardProps> = ({ id, label, turnOn }): JSX.Element => {
+const SwitchCard: React.FC<SwitchCardProps> = ({ id, label, turnOn }): JSX.Element => {
   const onChnageSwitch = useCallback(async (checked: boolean) => {
     await apiClient.switcher.update({ id, turnOn: checked })
   }, [id])
@@ -40,4 +40,4 @@ const FunctionSwitchCard: React.FC<FunctionSwitchCardProps> = ({ id, label, turn
   )
 }
 
-export default FunctionSwitchCard
+export default SwitchCard
