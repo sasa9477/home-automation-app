@@ -1,9 +1,19 @@
+/* eslint-disable no-console */
 // @ts-check
+const fs = require('fs');
 const readline = require('readline');
-const { PrismaClient } = require('@prisma/client');
+const { PrismaClient, Prisma } = require('@prisma/client');
 const colors = require('colors');
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient({ log: ['query'] });
+
+/** @type { string | undefined } */
+let provider = '';
+const path = './prisma/migrations/migration_lock.toml';
+if (fs.existsSync(path)) {
+  const data = fs.readFileSync(path, 'utf8');
+  provider = /provider\s+=\s+"(.+)"/.exec(data)?.[1];
+}
 
 /** @type {import('@prisma/client').Prisma.SwitcherCreateInput[]} */
 const switchers = [
@@ -66,6 +76,13 @@ const deleteAllData = async () => {
   for (const modelName of modelNames) {
     const query = prisma[modelName].deleteMany();
     queries.push(query);
+
+    // delete autoincrement sequence
+    if (provider === 'sqlite') {
+      const q = `DELETE FROM sqlite_sequence WHERE name = '${modelName}' COLLATE NOCASE`;
+      const resetSequenceQuery = prisma.$executeRawUnsafe(q);
+      queries.push(resetSequenceQuery);
+    }
   }
 
   return await prisma.$transaction(queries);
@@ -98,7 +115,9 @@ const main = async () => {
     const answer = await prompt(colors.yellow('Delete all data and try seeding again? (y/n) '));
     if (answer.trim().toLowerCase() === 'y') {
       const deleteAllDataResult = await deleteAllData();
-      const deleteCount = deleteAllDataResult.flatMap((table) => table.count).reduce((sum, count) => (sum += count));
+      const deleteCount = deleteAllDataResult
+        .flatMap((table) => (table.count ? table.count : 0))
+        .reduce((sum, count) => (sum += count));
       console.log(colors.red(`Delete ${deleteCount} columns.`));
 
       const result = await transfer();
