@@ -6,7 +6,6 @@ import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { useFirstMountState, useMount, useToggle } from 'react-use';
 
 import apiClient from '../utils/apiClient';
-import { useMyAppContext } from './MyAppContextProvider';
 
 export type FormInput = {
   id: number,
@@ -29,7 +28,6 @@ export type SwitchSettingCardProps = {
 const SwitchSettingCard: React.FC<SwitchSettingCardProps> = ({ input, forwardRef, delegate }) => {
   const isCreateNew = input.id === 0;
   const isFirstMount = useFirstMountState()
-  const { setShownNewCard } = useMyAppContext()
   const [isEdit, toggleEdit] = useToggle(isCreateNew);
   const nameInputRef = useRef<HTMLInputElement | null>(null);
   const { formState: { errors }, control, handleSubmit, reset } = useForm<FormInput>({
@@ -50,10 +48,10 @@ const SwitchSettingCard: React.FC<SwitchSettingCardProps> = ({ input, forwardRef
       await delegate.onSaveButtonClick(data)
     } else {
       await delegate.onSaveButtonClick(data)
-      setTimeout(async () => {
-        setShownNewCard(false)
+      // TODO: settingspageと同期をとる
+      setTimeout(() => {
         reset()
-      }, 300)
+      }, 300);
     }
   }
 
@@ -167,7 +165,6 @@ const SwitchSettingCard: React.FC<SwitchSettingCardProps> = ({ input, forwardRef
             variant='contained'
             onClick={() => {
               reset()
-              setShownNewCard(false)
               delegate.onCancelNewCardButtonClick()
             }}
           >

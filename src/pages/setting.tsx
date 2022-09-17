@@ -1,6 +1,6 @@
-import { Fade, Input, Stack } from '@mui/material';
+import { Fade, Stack } from '@mui/material';
 import { Switcher } from '@prisma/client';
-import React, { Dispatch, useCallback, useEffect, useReducer, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useMount } from 'react-use';
 
 import { useMyAppContext } from '../components/MyAppContextProvider';
@@ -9,15 +9,16 @@ import SwitchSettingCardRef from '../components/SwitchSettingCardRef';
 import apiClient from '../utils/apiClient';
 
 import type { NextPage } from 'next'
+
 type SettingPageProps = {
 }
 
 const SettingPage: NextPage<SettingPageProps> = ({ }) => {
-  const { shownNewCard: isShownNewCard } = useMyAppContext()
-  const [switchers, setSwitchers] = useState<Switcher[]>([])
+  const { shownNewCard, setShownNewCard } = useMyAppContext()
+  const [shownNewCardArea, setShownNewCardArea] = useState(false)
   const [fadeNewCard, setFadeNewCard] = useState(false)
-  const [shownNewCard, setShownNewCard] = useState(false)
   const cardRef = useRef<HTMLDivElement | null>(null)
+  const [switchers, setSwitchers] = useState<Switcher[]>([])
 
   const onSaveButtonClick = useCallback(async (data: FormInput) => {
     console.log(`submit: ${JSON.stringify(data, null, 2)}`)
@@ -30,6 +31,7 @@ const SettingPage: NextPage<SettingPageProps> = ({ }) => {
       if (res.status === 200) {
         setSwitchers(res.data)
       }
+      setShownNewCard(false)
     } else {
       await apiClient.switcher.update({ ...data })
 
@@ -38,7 +40,7 @@ const SettingPage: NextPage<SettingPageProps> = ({ }) => {
         setSwitchers(res.data)
       }
     }
-  }, [])
+  }, [setShownNewCard])
 
   const onDeleteButtonClick = useCallback(async (id: number) => {
     console.log(id)
@@ -48,32 +50,40 @@ const SettingPage: NextPage<SettingPageProps> = ({ }) => {
     if (res.status === 200) {
       setSwitchers(res.data)
     }
-  }, [setSwitchers])
+  }, [])
 
   const onCancelNewCardButtonClick = useCallback(() => {
-    // scroll on cancel
+    // scroll up and hide on cancel
     if (cardRef.current) {
       const scrollHeight = cardRef.current.clientHeight * -1
       window.scrollBy({ top: scrollHeight, left: 0, behavior: 'smooth' });
     }
-  }, [])
+    // setFadeNewCard(false)
+    setShownNewCard(false)
+  }, [setShownNewCard])
 
   useEffect(() => {
-    if (isShownNewCard) {
+    if (shownNewCard) {
       // appear new card
-      setShownNewCard(true)
       setFadeNewCard(true)
       setTimeout(() => {
         window.scrollTo({ top: document.body.scrollHeight, left: 0, behavior: 'smooth' });
       }, 100)
     } else {
-      // hide new card on save or cancel
+      // hide new card
       setFadeNewCard(false)
-      setTimeout(() => {
-        setShownNewCard(false)
-      }, 300)
     }
-  }, [isShownNewCard])
+  }, [shownNewCard])
+
+  useEffect(() => {
+    if (fadeNewCard) {
+      setShownNewCardArea(true)
+    } else {
+      setTimeout(() => {
+        setShownNewCardArea(false)
+      }, 300);
+    }
+  }, [fadeNewCard])
 
   useMount(() => {
     (async () => {
@@ -100,7 +110,7 @@ const SettingPage: NextPage<SettingPageProps> = ({ }) => {
       <Fade
         in={fadeNewCard}
         style={{
-          display: shownNewCard ? undefined : 'none',
+          display: shownNewCardArea ? undefined : 'none',
           transitionDelay: fadeNewCard ? '100ms' : '0ms'
         }}
       >

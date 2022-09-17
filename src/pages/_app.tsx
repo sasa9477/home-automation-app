@@ -1,6 +1,7 @@
 import { createTheme, CssBaseline, ThemeProvider, useMediaQuery } from '@mui/material';
 
 import Layout from '../components/Layout';
+import MyAppContextProvider from '../components/MyAppContextProvider';
 
 import type { AppProps } from 'next/app'
 
@@ -25,9 +26,11 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Layout>
-        <Component {...pageProps} />
-      </Layout>
+      <MyAppContextProvider>
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
+      </MyAppContextProvider>
     </ThemeProvider>
   )
 }
