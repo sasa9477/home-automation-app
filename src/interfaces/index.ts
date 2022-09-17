@@ -1,7 +1,9 @@
 import { Prisma, Switcher } from '@prisma/client';
 
-export type SwitcherCreateRequest = Omit<Switcher, 'id' | 'enabled'>;
+export type SwitcherGetRequest = {};
+export type SwitcherGetResponse = Switcher[] & {};
 
+export type SwitcherCreateRequest = Omit<Switcher, 'id' | 'enabled'>;
 export type SwitcherCreateResponse = {};
 
 export type SwitcherUpdateRequest = Pick<Switcher, 'id'> & Partial<Switcher>;

@@ -1,42 +1,32 @@
 import { Fade, Stack } from '@mui/material';
 import { Switcher } from '@prisma/client';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffectOnce } from 'react-use';
 
 import { useMyAppContext } from '../components/MyAppContextProvider';
 import SwitchSettingCard from '../components/SwitchSettingCard';
 import { SwitchSettingCardRef } from '../components/SwitchSettingCardRef';
-import { prismaClient } from '../utils/prismaClient';
+import apiClient from '../utils/apiClient';
 
-import type { GetServerSideProps, NextPage } from 'next'
+import type { NextPage } from 'next'
 type SettingPageProps = {
-  switchers: Switcher[]
 }
 
-export const getServerSideProps: GetServerSideProps<SettingPageProps> = async (context) => {
-  const switchers = await prismaClient.switcher.findMany({
-    where: {
-      enabled: true
-    },
-    orderBy: {
-      id: 'asc'
-    }
-  })
-
-  return {
-    props: {
-      switchers
-    }
-  }
-}
-
-const SettingPage: NextPage<SettingPageProps> = ({ switchers }) => {
+const SettingPage: NextPage<SettingPageProps> = ({ }) => {
   const { shownNewCard } = useMyAppContext()
   const [shownFade, setShownFade] = useState(false)
   const cardRef = useRef<HTMLDivElement | null>(null)
+  const [switchers, setSwitchers] = useState<Switcher[]>([])
 
-  const onDeleteButtonClick = useCallback((id: number) => {
+  const onDeleteButtonClick = useCallback(async (id: number) => {
     console.log(id)
-  }, [])
+    await apiClient.switcher.delete({ id: id })
+
+    const res = await apiClient.switcher.get()
+    if (res.status === 200) {
+      setSwitchers(res.data)
+    }
+  }, [setSwitchers])
 
   useEffect(() => {
     if (shownNewCard) {
@@ -57,6 +47,16 @@ const SettingPage: NextPage<SettingPageProps> = ({ switchers }) => {
       window.scrollTo({ top: document.body.scrollHeight, left: 0, behavior: 'smooth' });
     }
   }, [shownFade])
+
+  useEffect(() => {
+    (async () => {
+      const res = await apiClient.switcher.get()
+      if (res.status === 200) {
+        console.log(res.data)
+        setSwitchers(res.data)
+      }
+    })()
+  }, [setSwitchers])
 
   return (
     <Stack>
