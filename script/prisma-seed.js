@@ -56,26 +56,6 @@ const transfer = async () => {
   return await prisma.$transaction(seeds);
 };
 
-// // TemplateStringArray => https://www.prisma.io/docs/concepts/components/prisma-client/raw-database-access#using-variables
-// // https://zenn.dev/cohky/articles/prisma-to-truncate
-// const truncateAllTables = async () => {
-//   const transactions = [];
-//   // 外部キーを無効化 ※ここでエラーになるのでコメントアウト
-//   transactions.push(prisma.$executeRaw`SET FOREIGN_KEY_CHECKS = 0;`);
-
-//   const allProperties = Object.keys(prisma);
-//   const modelNames = allProperties.filter((x) => !(typeof x === 'string' && (x.startsWith('$') || x.startsWith('_'))));
-
-//   for (const modelName of modelNames) {
-//     transactions.push(prisma[modelName].deleteMany());
-//   }
-
-//   // 外部キーを有効化
-//   transactions.push(prisma.$executeRaw`SET FOREIGN_KEY_CHECKS = 1;`);
-
-//   await prisma.$transaction(transactions);
-// };
-
 const deleteAllData = async () => {
   const modelNames = Object.keys(prisma).filter(
     (x) => !(typeof x === 'string' && (x.startsWith('$') || x.startsWith('_')))
