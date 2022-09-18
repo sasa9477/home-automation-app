@@ -1,5 +1,6 @@
 import SettingsIcon from '@mui/icons-material/Settings';
 import { Box, Button, Card, Fade, FormControlLabel, keyframes, Stack, Switch, TextField, Typography } from '@mui/material';
+import { Switcher } from '@prisma/client';
 import React, { useEffect, useState } from 'react';
 import { useRef } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
@@ -16,21 +17,22 @@ export type FormInput = {
 }
 
 export type SwitchSettingCardProps = {
-  input: FormInput,
   forwardRef?: React.Ref<HTMLDivElement>,
+  input: FormInput,
   delegate: {
     onSaveButtonClick: (input: FormInput) => void,
     onDeleteButtonClick: (id: number) => void,
-    onCancelNewCardButtonClick: () => void
+    onCancelNewCardButtonClick: () => void,
+    duplicateCheck: (propName: keyof Switcher, value: string, originalValue: string) => boolean
   }
 }
 
-const SwitchSettingCard: React.FC<SwitchSettingCardProps> = ({ input, forwardRef, delegate }) => {
+const SwitchSettingCard: React.FC<SwitchSettingCardProps> = ({ forwardRef, input, delegate }) => {
   const isCreateNew = input.id === 0;
   const isFirstMount = useFirstMountState()
   const [isEdit, toggleEdit] = useToggle(isCreateNew);
   const nameInputRef = useRef<HTMLInputElement | null>(null);
-  const { formState: { errors }, control, handleSubmit, reset } = useForm<FormInput>({
+  const { formState: { isDirty, errors }, control, handleSubmit, reset } = useForm<FormInput>({
     defaultValues: {
       ...input
     },
@@ -45,10 +47,11 @@ const SwitchSettingCard: React.FC<SwitchSettingCardProps> = ({ input, forwardRef
   const onSubmit = async (data: FormInput) => {
     if (!isCreateNew) {
       toggleEdit()
-      await delegate.onSaveButtonClick(data)
+      if (isDirty) {
+        await delegate.onSaveButtonClick(data)
+      }
     } else {
       await delegate.onSaveButtonClick(data)
-      // TODO: settingspageと同期をとる
       setTimeout(() => {
         reset()
       }, 300);
@@ -175,7 +178,10 @@ const SwitchSettingCard: React.FC<SwitchSettingCardProps> = ({ input, forwardRef
           name="name"
           control={control}
           rules={{
-            required: '名前を入力してください'
+            required: '名前を入力してください',
+            validate: {
+              duplicateCheck: value => delegate.duplicateCheck('name', value, input.name)
+            }
           }}
           render={({ field }) => (
             <TextField
@@ -185,7 +191,7 @@ const SwitchSettingCard: React.FC<SwitchSettingCardProps> = ({ input, forwardRef
               disabled={!isEdit}
               inputProps={{ spellCheck: false }}
               error={errors.name !== undefined}
-              helperText={errors.name?.message}
+              helperText={errors.name?.type === 'duplicateCheck' ? '同じ名前を登録することはできません' : errors.name?.message}
               size="small"
               inputRef={nameInputRef}
               onFocus={() => nameInputRef.current?.focus()}
@@ -206,6 +212,9 @@ const SwitchSettingCard: React.FC<SwitchSettingCardProps> = ({ input, forwardRef
               pattern: {
                 value: /\b((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}\b/,
                 message: 'IPアドレス(v4)の形式で入力してください'
+              },
+              validate: {
+                duplicateCheck: value => delegate.duplicateCheck('ipaddress', value, input.ipaddress)
               }
             }}
             render={({ field }) => (
@@ -214,13 +223,10 @@ const SwitchSettingCard: React.FC<SwitchSettingCardProps> = ({ input, forwardRef
                 type="text"
                 label="IPアドレス"
                 placeholder='192.168.0.1'
-                inputProps={{
-                  inputMode: 'decimal',
-                  pattern: '/\b((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}\b/'
-                }}
+                inputProps={{ inputMode: 'decimal' }}
                 disabled={!isEdit}
                 error={errors.ipaddress !== undefined}
-                helperText={errors.ipaddress?.message}
+                helperText={errors.ipaddress?.type === 'duplicateCheck' ? '同じIPアドレスを登録することはできません' : errors.ipaddress?.message}
                 size="small"
                 sx={{
                   width: '100%',

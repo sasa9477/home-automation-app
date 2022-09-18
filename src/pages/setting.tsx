@@ -54,6 +54,21 @@ const SettingPage: NextPage<SettingPageProps> = ({ }) => {
     setShownNewCard(false)
   }, [setShownNewCard])
 
+  const duplicateCheck = useCallback((propName: keyof Switcher, value: string, originalValue: string) => {
+    if (value === originalValue) {
+      return true
+    }
+
+    switch (propName) {
+      case 'name':
+        return !switchers.some(s => s.name === value)
+      case 'ipaddress':
+        return !switchers.some(s => s.ipaddress === value)
+      default:
+        return false
+    }
+  }, [switchers])
+
   useEffect(() => {
     if (shownNewCard) {
       // appear new card
@@ -96,7 +111,8 @@ const SettingPage: NextPage<SettingPageProps> = ({ }) => {
           delegate={{
             onSaveButtonClick,
             onDeleteButtonClick,
-            onCancelNewCardButtonClick
+            onCancelNewCardButtonClick,
+            duplicateCheck
           }}
         />
       ))}
@@ -123,7 +139,8 @@ const SettingPage: NextPage<SettingPageProps> = ({ }) => {
           delegate={{
             onSaveButtonClick,
             onDeleteButtonClick,
-            onCancelNewCardButtonClick
+            onCancelNewCardButtonClick,
+            duplicateCheck
           }}
           ref={newCardRef}
         />
