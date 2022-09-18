@@ -12,6 +12,7 @@ CREATE TABLE "Switcher" (
 -- CreateTable
 CREATE TABLE "Log" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "logLevel" INTEGER NOT NULL,
     "message" TEXT NOT NULL,
     "created_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );

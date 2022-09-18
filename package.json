@@ -11,7 +11,7 @@
     "prisma-migrate": "yarn prisma migrate dev --name",
     "prisma-db-push-force": "yarn prisma db push --accept-data-loss && node script/prisma-seed.js",
     "prisma-studio": "yarn prisma studio",
-    "prisma-seed": "node script/prisma-seed.js"
+    "prisma-seed": "node script/prisma-dev-seed.js"
   },
   "dependencies": {
     "@emotion/react": "^11.10.4",

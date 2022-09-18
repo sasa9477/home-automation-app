@@ -19,6 +19,8 @@ model Switcher {
 
 model Log {
   id        Int      @id @default(autoincrement())
+  /// Debug = 0, Info = 1, Warn = 2, Error = 3
+  logLevel  Int
   message   String
   createdAt DateTime @default(now()) @map(name: "created_at")
 }

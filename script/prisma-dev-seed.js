@@ -34,7 +34,20 @@ const switchers = [
 /** @type {import('@prisma/client').Prisma.LogCreateInput[]} */
 const logs = [
   {
-    message: 'this is first log',
+    logLevel: 0,
+    message: 'this is debug log.',
+  },
+  {
+    logLevel: 1,
+    message: 'this is info log.',
+  },
+  {
+    logLevel: 2,
+    message: 'this is warn log.',
+  },
+  {
+    logLevel: 3,
+    message: 'this is error log.',
   },
 ];
 
