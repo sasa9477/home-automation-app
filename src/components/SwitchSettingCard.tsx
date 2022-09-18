@@ -47,9 +47,9 @@ const SwitchSettingCard: React.FC<SwitchSettingCardProps> = ({ forwardRef, input
   const onSubmit = async (data: FormInput) => {
     if (!isCreateNew) {
       toggleEdit()
-      if (isDirty) {
-        await delegate.onSaveButtonClick(data)
-      }
+      // update default values
+      reset(data)
+      await delegate.onSaveButtonClick(data)
     } else {
       await delegate.onSaveButtonClick(data)
       setTimeout(() => {
@@ -237,7 +237,7 @@ const SwitchSettingCard: React.FC<SwitchSettingCardProps> = ({ forwardRef, input
           <Button
             variant='contained'
             type="submit"
-            disabled={!isEdit}
+            disabled={!(isEdit && isDirty)}
             sx={{
               height: '40px',
               marginLeft: theme => theme.spacing(2)
