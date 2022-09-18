@@ -1,4 +1,4 @@
-import type { PrismaClient } from '@prisma/client';
+import apiClient from './apiClient';
 
 // https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Errors/Cyclic_object_value
 const getCircularReplacer = (() => {
@@ -26,50 +26,42 @@ export enum LogLevel {
   ERROR,
 }
 
-export function logDebug(prisma: PrismaClient, message: string, paramObject?: object) {
+export function logDebug(message: string, paramObject?: object) {
   if (arguments.length == 2) {
     message = messageWithObject(message, paramObject);
   }
-  prisma.log.create({
-    data: {
-      logLevel: LogLevel.DEBUG,
-      message,
-    },
+  apiClient.log.create({
+    logLevel: LogLevel.DEBUG,
+    message,
   });
 }
 
-export function logInformation(prisma: PrismaClient, message: string, paramObject?: object) {
+export function logInformation(message: string, paramObject?: object) {
   if (arguments.length == 2) {
     message = messageWithObject(message, paramObject);
   }
-  prisma.log.create({
-    data: {
-      logLevel: LogLevel.INFO,
-      message,
-    },
+  apiClient.log.create({
+    logLevel: LogLevel.INFO,
+    message,
   });
 }
 
-export function logWarning(prisma: PrismaClient, message: string, paramObject?: object) {
+export function logWarning(message: string, paramObject?: object) {
   if (arguments.length == 2) {
     message = messageWithObject(message, paramObject);
   }
-  prisma.log.create({
-    data: {
-      logLevel: LogLevel.WARN,
-      message,
-    },
+  apiClient.log.create({
+    logLevel: LogLevel.WARN,
+    message,
   });
 }
 
-export function logError(prisma: PrismaClient, message: string, paramObject?: object) {
+export function logError(message: string, paramObject?: object) {
   if (arguments.length == 2) {
     message = messageWithObject(message, paramObject);
   }
-  prisma.log.create({
-    data: {
-      logLevel: LogLevel.ERROR,
-      message,
-    },
+  apiClient.log.create({
+    logLevel: LogLevel.ERROR,
+    message,
   });
 }

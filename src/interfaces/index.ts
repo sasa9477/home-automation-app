@@ -1,4 +1,4 @@
-import { Prisma, Switcher } from '@prisma/client';
+import { Log, Prisma, Switcher } from '@prisma/client';
 
 export type SwitcherGetRequest = {};
 export type SwitcherGetResponse = Switcher[] & {};
@@ -14,7 +14,5 @@ export type SwitcherDeleteRequest = {
 };
 export type SwitcherDeleteResponse = {};
 
-export type LogCreateRequest = {
-  message: string;
-};
+export type LogCreateRequest = Omit<Log, 'id' | 'createdAt'>;
 export type LogCreateResponse = {};
