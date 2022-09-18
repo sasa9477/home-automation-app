@@ -5,16 +5,6 @@ const readline = require('readline');
 const { PrismaClient, Prisma } = require('@prisma/client');
 const colors = require('colors');
 
-const prisma = new PrismaClient({ log: ['query'] });
-
-/** @type { string | undefined } */
-let provider = '';
-const path = './prisma/migrations/migration_lock.toml';
-if (fs.existsSync(path)) {
-  const data = fs.readFileSync(path, 'utf8');
-  provider = /provider\s+=\s+"(.+)"/.exec(data)?.[1];
-}
-
 /** @type {import('@prisma/client').Prisma.SwitcherCreateInput[]} */
 const switchers = [
   {
@@ -47,6 +37,16 @@ const logs = [
     message: 'this is first log',
   },
 ];
+
+const prisma = new PrismaClient({ log: ['query'] });
+
+/** @type { string | undefined } */
+let provider = '';
+const path = './prisma/migrations/migration_lock.toml';
+if (fs.existsSync(path)) {
+  const data = fs.readFileSync(path, 'utf8');
+  provider = /provider\s+=\s+"(.+)"/.exec(data)?.[1];
+}
 
 const transfer = async () => {
   const seeds = [];
