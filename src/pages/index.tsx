@@ -35,7 +35,6 @@ const Home: NextPage<HomePageProps> = ({ switchers }) => {
     <Stack
       sx={{
         m: 1,
-        p: 1,
         rowGap: 2,
       }}>
       {switchers.map((switcher) => (
@@ -45,7 +44,7 @@ const Home: NextPage<HomePageProps> = ({ switchers }) => {
           label={switcher.name} />
       ))}
       {switchers.length === 0 &&
-        <Typography sx={{ alignSelf: 'center' }}>
+        <Typography sx={{ mt: 1, alignSelf: 'center' }}>
           データがありません
         </Typography>
       }

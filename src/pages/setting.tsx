@@ -117,7 +117,7 @@ const SettingPage: NextPage<SettingPageProps> = ({ }) => {
         />
       ))}
       {!loadingRef.current && switchers.length === 0 &&
-        <Typography sx={{ alignSelf: 'center' }}>
+        <Typography sx={{ mt: 2, alignSelf: 'center' }}>
           データがありません
         </Typography>
       }
