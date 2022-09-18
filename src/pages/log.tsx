@@ -3,11 +3,10 @@ import { Log } from '@prisma/client';
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
 
-import { LogLevel } from '../utils/log';
+import LogLevel from '../models/LogLevel';
 import { prismaClient } from '../utils/prismaClient';
 
 import type { GetServerSideProps, NextPage } from 'next'
-
 type LogViewModel = Omit<Log, 'logLevel' | 'createdAt'> & {
   logLevel: string,
   createdAt: string,
