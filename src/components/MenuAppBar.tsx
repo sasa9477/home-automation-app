@@ -5,16 +5,15 @@ import { useRouter } from 'next/router';
 import * as React from 'react';
 import { useCallback } from 'react';
 
+import usePubSub from '../hooks/usePubsub';
 import LinkMenuItem from './LinkMenuItem';
-import { useMyAppContext } from './MyAppContextProvider';
 
 type MenuAppBarProps = {
 }
 
 const MenuAppBar: React.FC<MenuAppBarProps> = (): JSX.Element => {
-  const { setShownNewCard } = useMyAppContext()
-
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const { publish } = usePubSub()
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -25,18 +24,16 @@ const MenuAppBar: React.FC<MenuAppBarProps> = (): JSX.Element => {
   };
 
   const router = useRouter()
-  const isShownAppBarButton = ['/', '/setting'].includes(router.pathname)
+  const isShownAppBarButton = ['/setting'].includes(router.pathname)
 
   const onAppBarButtonClick = useCallback(() => {
     switch (router.pathname) {
-      case '/':
-        return router.push('/setting')
       case '/setting':
-        return setShownNewCard(true)
+        return publish('AppBarButtonClickEvent')
       default:
         break;
     }
-  }, [router, setShownNewCard])
+  }, [router.pathname, publish])
 
   const menuList = [
     {

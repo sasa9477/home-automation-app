@@ -1,25 +1,24 @@
 import { Fade, Stack, Typography } from '@mui/material';
 import { Switcher } from '@prisma/client';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useMount } from 'react-use';
+import { useMount, useUnmount } from 'react-use';
 
-import { useMyAppContext } from '../components/MyAppContextProvider';
 import SwitchSettingCard, { FormInput } from '../components/SwitchSettingCard';
 import SwitchSettingCardRef from '../components/SwitchSettingCardRef';
+import usePubSub from '../hooks/usePubsub';
 import apiClient from '../utils/apiClient';
 
 import type { NextPage } from 'next'
-
 type SettingPageProps = {
 }
 
 const SettingPage: NextPage<SettingPageProps> = ({ }) => {
-  const { shownNewCard, setShownNewCard } = useMyAppContext()
   const [shownNewCardArea, setShownNewCardArea] = useState(false)
   const [fadeNewCard, setFadeNewCard] = useState(false)
   const newCardRef = useRef<HTMLDivElement | null>(null)
   const loadingRef = useRef(true);
   const [switchers, setSwitchers] = useState<Switcher[]>([])
+  const { subscribe, unsubscribe } = usePubSub()
 
   const loadSwitchers = useCallback(async () => {
     const res = await apiClient.switcher.get()
@@ -33,12 +32,12 @@ const SettingPage: NextPage<SettingPageProps> = ({ }) => {
       // remove id value from data
       const { id, ...req } = data
       await apiClient.switcher.create({ ...req })
-      setShownNewCard(false)
+      setFadeNewCard(false)
     } else {
       await apiClient.switcher.update({ ...data })
     }
     await loadSwitchers()
-  }, [setShownNewCard, loadSwitchers])
+  }, [loadSwitchers])
 
   const onDeleteButtonClick = useCallback(async (id: number) => {
     await apiClient.switcher.delete({ id: id })
@@ -51,8 +50,8 @@ const SettingPage: NextPage<SettingPageProps> = ({ }) => {
       const scrollHeight = newCardRef.current.clientHeight * -1
       window.scrollBy({ top: scrollHeight, left: 0, behavior: 'smooth' });
     }
-    setShownNewCard(false)
-  }, [setShownNewCard])
+    setFadeNewCard(false)
+  }, [])
 
   const duplicateCheck = useCallback((propName: keyof Switcher, value: string, originalValue: string) => {
     if (value === originalValue) {
@@ -70,19 +69,6 @@ const SettingPage: NextPage<SettingPageProps> = ({ }) => {
   }, [switchers])
 
   useEffect(() => {
-    if (shownNewCard) {
-      // appear new card
-      setFadeNewCard(true)
-      setTimeout(() => {
-        newCardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
-      }, 100)
-    } else {
-      // hide new card
-      setFadeNewCard(false)
-    }
-  }, [shownNewCard])
-
-  useEffect(() => {
     if (fadeNewCard) {
       setShownNewCardArea(true)
     } else {
@@ -92,6 +78,14 @@ const SettingPage: NextPage<SettingPageProps> = ({ }) => {
     }
   }, [fadeNewCard])
 
+  const onAppBarButtonClick = (() => {
+    // appear new card
+    setFadeNewCard(true)
+    setTimeout(() => {
+      newCardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
+    }, 100)
+  })
+
   useMount(() => {
     (async () => {
       const res = await apiClient.switcher.get()
@@ -100,6 +94,11 @@ const SettingPage: NextPage<SettingPageProps> = ({ }) => {
         loadingRef.current = false
       }
     })()
+    subscribe('AppBarButtonClickEvent', onAppBarButtonClick)
+  })
+
+  useUnmount(() => {
+    unsubscribe('AppBarButtonClickEvent', onAppBarButtonClick)
   })
 
   return (
