@@ -9,14 +9,6 @@ CREATE TABLE "Switcher" (
     "updated_at" DATETIME NOT NULL
 );
 
--- CreateTable
-CREATE TABLE "Log" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "logLevel" INTEGER NOT NULL,
-    "message" TEXT NOT NULL,
-    "created_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-
 -- CreateIndex
 CREATE UNIQUE INDEX "Switcher_name_key" ON "Switcher"("name");
 

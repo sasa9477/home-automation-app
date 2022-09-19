@@ -31,26 +31,6 @@ const switchers = [
   },
 ];
 
-/** @type {import('@prisma/client').Prisma.LogCreateInput[]} */
-const logs = [
-  {
-    logLevel: 0,
-    message: 'this is debug log.',
-  },
-  {
-    logLevel: 1,
-    message: 'this is info log.',
-  },
-  {
-    logLevel: 2,
-    message: 'this is warn log.',
-  },
-  {
-    logLevel: 3,
-    message: 'this is error log.',
-  },
-];
-
 const prisma = new PrismaClient({ log: ['query'] });
 
 /** @type { string | undefined } */
@@ -69,13 +49,6 @@ const transfer = async () => {
     });
     seeds.push(seed);
   }
-  for (const log of logs) {
-    const seed = prisma.log.create({
-      data: { ...log },
-    });
-    seeds.push(seed);
-  }
-
   return await prisma.$transaction(seeds);
 };
 
