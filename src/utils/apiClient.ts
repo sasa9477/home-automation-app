@@ -1,8 +1,6 @@
 import axios from 'axios';
 
 import {
-  LogCreateRequest,
-  LogCreateResponse,
   LogGetRequest,
   LogGetResponse,
   SwitcherCreateRequest,
@@ -24,7 +22,6 @@ const apiClient = {
   },
   log: {
     get: (req: LogGetRequest) => axios.post<LogGetResponse>('/api/switcher/post', req),
-    create: (req: LogCreateRequest) => axios.post<LogCreateResponse>('/api/switcher/post', req),
   },
 };
 
