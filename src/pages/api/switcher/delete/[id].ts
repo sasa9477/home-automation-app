@@ -1,5 +1,6 @@
 import { NextApiHandler } from 'next';
 
+import logger from '../../../../logger/logger';
 import { prismaClient } from '../../../../utils/prismaClient';
 
 export type SwitcherDeleteRequest = {
@@ -16,12 +17,17 @@ const handler: NextApiHandler<SwitcherDeleteResponse> = async (req, res) => {
     return;
   }
 
-  await prismaClient.switcher.delete({
-    where: {
-      id: id,
-    },
-  });
-  res.status(200).end();
+  try {
+    await prismaClient.switcher.delete({
+      where: {
+        id: id,
+      },
+    });
+    res.status(200).end();
+  } catch (e) {
+    logger.error(e);
+    throw e;
+  }
 };
 
 export default handler;

@@ -1,8 +1,8 @@
 import { Switcher } from '@prisma/client';
 import { NextApiHandler } from 'next';
 
-import logger from '../../../../logger/logger';
-import { prismaClient } from '../../../../utils/prismaClient';
+import logger from '../../../logger/logger';
+import { prismaClient } from '../../../utils/prismaClient';
 
 export type SwitcherGetRequest = {};
 export type SwitcherGetResponse = Switcher[] & {};

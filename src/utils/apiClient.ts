@@ -5,12 +5,12 @@ import type { LogGetResponse } from '../pages/api/log/get';
 import type { SwitcherGetResponse } from '../pages/api/switcher/get';
 import type { SwitcherDeleteRequest, SwitcherDeleteResponse } from '../pages/api/switcher/delete/[id]';
 import type { SwitcherCreateRequest, SwitcherCreateResponse } from '../pages/api/switcher/post';
-import type { SwitcherUpdateRequest, SwitcherUpdateResponse } from '../pages/api/switcher/put';
+import type { SwitcherUpdateRequest, SwitcherUpdateResponse } from '../pages/api/switcher/patch';
 
 const apiClient = {
   switcher: {
     create: (req: SwitcherCreateRequest) => axios.post<SwitcherCreateResponse>('/api/switcher/post', req),
-    update: (req: SwitcherUpdateRequest) => axios.put<SwitcherUpdateResponse>('/api/switcher/put', req),
+    update: (req: SwitcherUpdateRequest) => axios.patch<SwitcherUpdateResponse>('/api/switcher/patch', req),
     delete: (req: SwitcherDeleteRequest) => axios.delete<SwitcherDeleteResponse>(`/api/switcher/delete/${req.id}`),
   },
 };

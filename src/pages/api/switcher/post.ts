@@ -1,8 +1,8 @@
 import { Prisma, Switcher } from '@prisma/client';
 import { NextApiHandler } from 'next';
 
-import logger from '../../../../logger/logger';
-import { prismaClient } from '../../../../utils/prismaClient';
+import logger from '../../../logger/logger';
+import { prismaClient } from '../../../utils/prismaClient';
 
 export type SwitcherCreateRequest = Omit<Switcher, 'id' | 'createdAt' | 'updatedAt'>;
 export type SwitcherCreateResponse = {};
