@@ -20,7 +20,7 @@ const config: LoggerOptions = {
           destination: 'logs/pretty.log',
           colorize: false,
           levelFirst: true,
-          translateTime: 'SYS:standard',
+          translateTime: 'SYS:yyyy-MM-dd HH:MM:ss',
         },
       },
     ],
