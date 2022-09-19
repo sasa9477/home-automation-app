@@ -1,68 +1,36 @@
 import { Box, Stack, Typography } from '@mui/material';
-import { Log } from '@prisma/client';
-import { format } from 'date-fns';
-import { ja } from 'date-fns/locale';
+import { useState } from 'react';
+import useSWR from 'swr';
 
-import LogLevel from '../models/LogLevel';
-import { prismaClient } from '../utils/prismaClient';
+import type { NextPage } from 'next'
 
-import type { GetServerSideProps, NextPage } from 'next'
-type LogViewModel = Omit<Log, 'logLevel' | 'createdAt'> & {
-  logLevel: string,
-  createdAt: string,
-  logColor: string
-}
+const fetcher = (url: string): Promise<any> => fetch(url).then(res => res.json())
 
-type LogPageProps = {
-  logs: LogViewModel[]
-}
-
-const logColors = ['', 'info.main', 'warning.main', 'error.main']
-
-export const getServerSideProps: GetServerSideProps<LogPageProps> = async (context) => {
-
-  const data = await prismaClient.log.findMany({
-    orderBy: {
-      createdAt: 'asc'
-    }
-  })
-
-  const logs: LogViewModel[] = data.map(item => {
-    return {
-      ...item,
-      createdAt: format(item.createdAt, 'yyyy/MM/d HH:mm:ss', { locale: ja }),
-      logLevel: LogLevel[item.logLevel],
-      logColor: logColors[item.logLevel]
-    }
-  })
-
+function useLoger() {
+  const { data, error } = useSWR('/api/log/get', fetcher)
   return {
-    props: {
-      logs
-    }
+    isLoading: !error && !data,
+    data,
+    error
   }
 }
 
-const LogPage: NextPage<LogPageProps> = ({ logs }) => {
+type LogPageProps = {
+}
+
+const LogPage: NextPage<LogPageProps> = ({ }) => {
+  const { isLoading, data, error } = useLoger()
+
   return (
     <Stack sx={{ m: 1 }}>
-      {logs.map(log => (
-        <Typography key={log.id}>
-          <Box component={'span'} sx={{ color: 'text.secondary' }}>
-            {log.createdAt + ' '}
-          </Box>
-          <Box component={'span'} sx={{ color: `${log.logColor}` }}>
-            {log.logLevel + ' '}
-          </Box>
-          <Box component='br' sx={{ display: { xs: undefined, sm: 'none' } }} />
-          <span>
-            {log.message}
-          </span>
-        </Typography>
-      ))}
-      {logs.length === 0 &&
+      {isLoading &&
         <Typography sx={{ alignSelf: 'center' }}>
-          データがありません
+          Loading...
+        </Typography>
+      }
+      {data?.log &&
+        <Typography sx={{ overflowWrap: 'break-word', whiteSpace: 'pre-wrap' }}>
+          {data.log}
         </Typography>
       }
     </Stack>

@@ -16,3 +16,8 @@ export type SwitcherDeleteResponse = {};
 
 export type LogCreateRequest = Omit<Log, 'id' | 'createdAt'>;
 export type LogCreateResponse = {};
+
+export type LogGetRequest = {};
+export type LogGetResponse = {
+  log: string;
+};
