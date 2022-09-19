@@ -54,3 +54,6 @@ dev.db
 dev.db-journal
 junit.xml
 /output.txt
+
+# log
+logs
