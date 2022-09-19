@@ -7,6 +7,28 @@ import type { SwitcherDeleteRequest, SwitcherDeleteResponse } from '../pages/api
 import type { SwitcherCreateRequest, SwitcherCreateResponse } from '../pages/api/switcher/post';
 import type { SwitcherUpdateRequest, SwitcherUpdateResponse } from '../pages/api/switcher/patch';
 
+axios.interceptors.response.use(
+  (res) => res,
+  (error) => {
+    if (error.response) {
+      // The request was made and the server responded with a status code
+      // that falls out of the range of 2xx
+      console.log(error.response.data);
+      console.log(error.response.status);
+      console.log(error.response.headers);
+    } else if (error.request) {
+      // The request was made but no response was received
+      // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+      // http.ClientRequest in node.js
+      console.log(error.request);
+    } else {
+      // Something happened in setting up the request that triggered an Error
+      console.log('Error', error.message);
+    }
+    console.log(error.config);
+  }
+);
+
 const apiClient = {
   switcher: {
     create: (req: SwitcherCreateRequest) => axios.post<SwitcherCreateResponse>('/api/switcher/post', req),
@@ -19,8 +41,8 @@ export default apiClient;
 
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
-export const useSwitcherSWR = () => {
-  const { data, error, mutate } = useSWR<SwitcherGetResponse>('/api/switcher/get', fetcher);
+export const useSwitcherSWR = (fallbackData?: SwitcherGetResponse) => {
+  const { data, error, mutate } = useSWR<SwitcherGetResponse>('/api/switcher/get', fetcher, { fallbackData });
   return {
     isLoading: !error && !data,
     switchers: data,
@@ -29,8 +51,8 @@ export const useSwitcherSWR = () => {
   };
 };
 
-export const useLogSWR = () => {
-  const { data, error, mutate } = useSWR<LogGetResponse>('/api/log/get', fetcher);
+export const useLogSWR = (fallbackData?: LogGetResponse) => {
+  const { data, error, mutate } = useSWR<LogGetResponse>('/api/log/get', fetcher, { fallbackData });
   return {
     isLoading: !error && !data,
     data,

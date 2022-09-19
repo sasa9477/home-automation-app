@@ -2,7 +2,6 @@ import { Card, FormControlLabel, Switch, Typography } from '@mui/material';
 import React, { EventHandler, ReactElement, useCallback } from 'react';
 
 import apiClient from '../utils/apiClient';
-import { prismaClient } from '../utils/prismaClient';
 
 type SwitchCardProps = {
   id: number;

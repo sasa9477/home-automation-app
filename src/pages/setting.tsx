@@ -7,14 +7,38 @@ import SwitchSettingCard, { FormInput } from '../components/SwitchSettingCard';
 import SwitchSettingCardRef from '../components/SwitchSettingCardRef';
 import usePubSub from '../hooks/usePubsub';
 import apiClient, { useSwitcherSWR } from '../utils/apiClient';
+import { prismaClient } from '../utils/prismaClient';
 
-import type { NextPage } from 'next'
+import type { GetServerSideProps, NextPage } from 'next'
 
 type SettingPageProps = {
+  fallback: {
+    switchers: Switcher[]
+  }
 }
 
-const SettingPage: NextPage<SettingPageProps> = ({ }) => {
-  const { isLoading, switchers, mutate } = useSwitcherSWR()
+export const getServerSideProps: GetServerSideProps<SettingPageProps> = async (context) => {
+  const data = await prismaClient.switcher.findMany({
+    orderBy: {
+      id: 'asc',
+    },
+  });
+
+  // Date型のシリアライズに失敗するので置きなおす
+  // https://github.com/vercel/next.js/issues/11993
+  const switchers = JSON.parse(JSON.stringify(data))
+
+  return {
+    props: {
+      fallback: {
+        switchers
+      }
+    }
+  }
+}
+
+const SettingPage: NextPage<SettingPageProps> = ({ fallback }) => {
+  const { isLoading, switchers, mutate } = useSwitcherSWR(fallback.switchers)
   const { subscribe, unsubscribe } = usePubSub()
   const [shownNewCardArea, setShownNewCardArea] = useState(false)
   const [fadeNewCard, setFadeNewCard] = useState(false)
@@ -27,7 +51,9 @@ const SettingPage: NextPage<SettingPageProps> = ({ }) => {
       await apiClient.switcher.create({ ...req })
       setFadeNewCard(false)
     } else {
-      await apiClient.switcher.update({ ...input })
+      await apiClient.switcher.update({ ...input }).catch((reason) => {
+        console.log(reason)
+      })
     }
     mutate()
   }, [mutate])
