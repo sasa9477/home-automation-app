@@ -1,10 +1,9 @@
 import SettingsIcon from '@mui/icons-material/Settings';
 import { Box, Button, Card, Fade, FormControlLabel, keyframes, Stack, Switch, TextField, Typography } from '@mui/material';
 import { Switcher } from '@prisma/client';
-import React, { useEffect, useState } from 'react';
 import { useRef } from 'react';
-import { Controller, SubmitHandler, useForm } from 'react-hook-form';
-import { useFirstMountState, useMount, useToggle } from 'react-use';
+import { Controller, useForm } from 'react-hook-form';
+import { useFirstMountState, useToggle } from 'react-use';
 
 import apiClient from '../utils/apiClient';
 
@@ -49,9 +48,9 @@ const SwitchSettingCard: React.FC<SwitchSettingCardProps> = ({ forwardRef, input
       toggleEdit()
       // update default values
       reset(data)
-      await delegate.onSaveButtonClick(data)
+      delegate.onSaveButtonClick(data)
     } else {
-      await delegate.onSaveButtonClick(data)
+      delegate.onSaveButtonClick(data)
       setTimeout(() => {
         reset()
       }, 300);

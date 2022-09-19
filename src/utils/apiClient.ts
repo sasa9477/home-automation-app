@@ -1,28 +1,40 @@
 import axios from 'axios';
+import useSWR from 'swr';
 
-import {
-  LogGetRequest,
-  LogGetResponse,
-  SwitcherCreateRequest,
-  SwitcherCreateResponse,
-  SwitcherDeleteRequest,
-  SwitcherDeleteResponse,
-  SwitcherGetRequest,
-  SwitcherGetResponse,
-  SwitcherUpdateRequest,
-  SwitcherUpdateResponse,
-} from '../interfaces';
+import type { LogGetResponse } from '../pages/api/log/get';
+import type { SwitcherGetResponse } from '../pages/api/switcher/get';
+import type { SwitcherDeleteRequest, SwitcherDeleteResponse } from '../pages/api/switcher/delete/[id]';
+import type { SwitcherCreateRequest, SwitcherCreateResponse } from '../pages/api/switcher/post';
+import type { SwitcherUpdateRequest, SwitcherUpdateResponse } from '../pages/api/switcher/put';
 
 const apiClient = {
   switcher: {
-    get: (req?: SwitcherGetRequest) => axios.get<SwitcherGetResponse>('/api/switcher/get', req),
     create: (req: SwitcherCreateRequest) => axios.post<SwitcherCreateResponse>('/api/switcher/post', req),
     update: (req: SwitcherUpdateRequest) => axios.put<SwitcherUpdateResponse>('/api/switcher/put', req),
     delete: (req: SwitcherDeleteRequest) => axios.delete<SwitcherDeleteResponse>(`/api/switcher/delete/${req.id}`),
   },
-  log: {
-    get: (req: LogGetRequest) => axios.post<LogGetResponse>('/api/switcher/post', req),
-  },
 };
 
 export default apiClient;
+
+const fetcher = (url: string) => axios.get(url).then((res) => res.data);
+
+export const useSwitcherSWR = () => {
+  const { data, error, mutate } = useSWR<SwitcherGetResponse>('/api/switcher/get', fetcher);
+  return {
+    isLoading: !error && !data,
+    switchers: data,
+    error,
+    mutate,
+  };
+};
+
+export const useLogSWR = () => {
+  const { data, error, mutate } = useSWR<LogGetResponse>('/api/log/get', fetcher);
+  return {
+    isLoading: !error && !data,
+    data,
+    error,
+    mutate,
+  };
+};

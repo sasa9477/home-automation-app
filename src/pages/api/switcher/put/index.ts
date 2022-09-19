@@ -1,8 +1,11 @@
+import { Switcher } from '@prisma/client';
 import { NextApiHandler } from 'next';
 
-import { SwitcherUpdateRequest, SwitcherUpdateResponse } from '../../../../interfaces';
 import logger from '../../../../logger/logger';
 import { prismaClient } from '../../../../utils/prismaClient';
+
+export type SwitcherUpdateRequest = Pick<Switcher, 'id'> & Partial<Switcher>;
+export type SwitcherUpdateResponse = {};
 
 const handler: NextApiHandler<SwitcherUpdateResponse> = async (req, res) => {
   const switcher = req.body as SwitcherUpdateRequest;

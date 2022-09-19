@@ -1,8 +1,8 @@
-import { Box, Stack, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import parse from 'html-react-parser';
 import { useEffect, useState } from 'react';
-import React from 'react';
-import useSWR from 'swr';
+
+import { useLogSWR } from '../utils/apiClient';
 
 import type { NextPage } from 'next'
 
@@ -13,38 +13,26 @@ const errorTypeWithTag: Record<string, string> = {
   'ERROR': '<span className="error">ERROR</span>'
 }
 
-const fetcher = (url: string): Promise<any> => fetch(url).then(res => res.json())
-
-function useLoger() {
-  const { data, error } = useSWR('/api/log/get', fetcher)
-  return {
-    isLoading: !error && !data,
-    data,
-    error
-  }
-}
-
 type LogPageProps = {
 }
 
 const LogPage: NextPage<LogPageProps> = ({ }) => {
   const [log, setLog] = useState('')
-  const { data, error } = useLoger()
+  const { data } = useLogSWR()
 
   useEffect(() => {
     if (data) {
-      const dataLog = data.log as string
-      const formatedData = dataLog.replace(errorTypeRegex, errorType => (errorTypeWithTag[errorType]))
+      const formatedData = data.log.replace(errorTypeRegex, errorType => (errorTypeWithTag[errorType]))
       setLog(formatedData)
-      // scroll to end
       setTimeout(() => {
+        // scroll to end
         window.scrollTo({ top: document.body.scrollHeight, left: 0 });
       }, 100);
     }
   }, [data, setLog])
 
   return (
-    <Box
+    <Typography
       sx={{
         m: 1,
         overflowWrap: 'break-word',
@@ -60,7 +48,7 @@ const LogPage: NextPage<LogPageProps> = ({ }) => {
         }
       }}>
       {parse(log)}
-    </Box>
+    </Typography>
   )
 }
 
