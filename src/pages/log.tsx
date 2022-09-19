@@ -1,8 +1,17 @@
 import { Box, Stack, Typography } from '@mui/material';
-import { useState } from 'react';
+import parse from 'html-react-parser';
+import { useEffect, useState } from 'react';
+import React from 'react';
 import useSWR from 'swr';
 
 import type { NextPage } from 'next'
+
+const errorTypeRegex = /(INFO|WARN|ERROR)/g
+const errorTypeWithTag: Record<string, string> = {
+  'INFO': '<span className="info">INFO</span>',
+  'WARN': '<span className="warn">WARN</span>',
+  'ERROR': '<span className="error">ERROR</span>'
+}
 
 const fetcher = (url: string): Promise<any> => fetch(url).then(res => res.json())
 
@@ -19,21 +28,35 @@ type LogPageProps = {
 }
 
 const LogPage: NextPage<LogPageProps> = ({ }) => {
-  const { isLoading, data, error } = useLoger()
+  const [log, setLog] = useState('')
+  const { data, error } = useLoger()
+
+  useEffect(() => {
+    if (data) {
+      const dataLog = data.log as string
+      const formatedData = dataLog.replace(errorTypeRegex, errorType => (errorTypeWithTag[errorType]))
+      setLog(formatedData)
+    }
+  }, [data, setLog])
 
   return (
-    <Stack sx={{ m: 1 }}>
-      {isLoading &&
-        <Typography sx={{ alignSelf: 'center' }}>
-          Loading...
-        </Typography>
-      }
-      {data?.log &&
-        <Typography sx={{ overflowWrap: 'break-word', whiteSpace: 'pre-wrap' }}>
-          {data.log}
-        </Typography>
-      }
-    </Stack>
+    <Box
+      sx={{
+        m: 1,
+        overflowWrap: 'break-word',
+        whiteSpace: 'pre-wrap',
+        "& .info": {
+          color: 'info.main'
+        },
+        "& .warning": {
+          color: "warning.main"
+        },
+        "& .error": {
+          color: 'error.main'
+        }
+      }}>
+      {parse(log)}
+    </Box>
   )
 }
 
