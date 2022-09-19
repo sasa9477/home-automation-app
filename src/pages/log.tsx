@@ -36,6 +36,10 @@ const LogPage: NextPage<LogPageProps> = ({ }) => {
       const dataLog = data.log as string
       const formatedData = dataLog.replace(errorTypeRegex, errorType => (errorTypeWithTag[errorType]))
       setLog(formatedData)
+      // scroll to end
+      setTimeout(() => {
+        window.scrollTo({ top: document.body.scrollHeight, left: 0 });
+      }, 100);
     }
   }, [data, setLog])
 
