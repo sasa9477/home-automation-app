@@ -1,9 +1,9 @@
 import SettingsIcon from '@mui/icons-material/Settings';
-import { Box, Button, Card, Fade, FormControlLabel, keyframes, Stack, Switch, TextField, Typography } from '@mui/material';
+import { Box, Button, Card, Fade, FormControlLabel, Stack, Switch, TextField, Typography } from '@mui/material';
 import { Switcher } from '@prisma/client';
 import { useRef } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { useFirstMountState, useToggle } from 'react-use';
+import { useToggle } from 'react-use';
 
 import apiClient from '../utils/apiClient';
 
@@ -28,7 +28,6 @@ export type SwitchSettingCardProps = {
 
 const SwitchSettingCard: React.FC<SwitchSettingCardProps> = ({ forwardRef, input, delegate }) => {
   const isCreateNew = input.id === 0;
-  const isFirstMount = useFirstMountState()
   const [isEdit, toggleEdit] = useToggle(isCreateNew);
   const nameInputRef = useRef<HTMLInputElement | null>(null);
   const { formState: { isDirty, errors }, control, handleSubmit, reset } = useForm<FormInput>({
@@ -56,24 +55,6 @@ const SwitchSettingCard: React.FC<SwitchSettingCardProps> = ({ forwardRef, input
       }, 300);
     }
   }
-
-  const rotate0animation = keyframes`
-    from {
-      transform: rotate(-90deg);
-    }
-    to {
-      transform: rotate(0deg);
-    }
-  `
-
-  const rotate90animation = keyframes`
-    from {
-      transform: rotate(0deg);
-    }
-    to {
-      transform: rotate(-90deg);
-    }
-  `
 
   return (
     <Card
@@ -143,7 +124,8 @@ const SwitchSettingCard: React.FC<SwitchSettingCardProps> = ({ forwardRef, input
             variant='contained'
             endIcon={<SettingsIcon
               sx={{
-                animation: `${isFirstMount ? '' : (isEdit ? rotate0animation : rotate90animation)} 0.3s ease forwards`
+                transition: 'transform 0.5s',
+                transform: isEdit ? 'rotate(90deg)' : 'rotate(0deg)',
               }}
             />}
             onClick={() => {
