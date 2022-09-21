@@ -5,6 +5,7 @@ import { useRef } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useToggle } from 'react-use';
 
+import usePrefersReducedMotion from '../hooks/usePrefersReducedMotion';
 import apiClient from '../utils/apiClient';
 
 export type FormInput = {
@@ -27,6 +28,7 @@ export type SwitchSettingCardProps = {
 }
 
 const SwitchSettingCard: React.FC<SwitchSettingCardProps> = ({ forwardRef, input, delegate }) => {
+  const prefersReducedMotion = usePrefersReducedMotion()
   const isCreateNew = input.id === 0;
   const [isEdit, toggleEdit] = useToggle(isCreateNew);
   const nameInputRef = useRef<HTMLInputElement | null>(null);
@@ -124,8 +126,8 @@ const SwitchSettingCard: React.FC<SwitchSettingCardProps> = ({ forwardRef, input
             variant='contained'
             endIcon={<SettingsIcon
               sx={{
-                transition: 'transform 0.5s',
-                transform: isEdit ? 'rotate(90deg)' : 'rotate(0deg)',
+                transition: !prefersReducedMotion ? 'transform 0.5s' : undefined,
+                transform: !prefersReducedMotion ? (isEdit ? 'rotate(90deg)' : 'rotate(0deg)') : undefined,
               }}
             />}
             onClick={() => {
