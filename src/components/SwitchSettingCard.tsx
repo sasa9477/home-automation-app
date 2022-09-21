@@ -78,7 +78,6 @@ const SwitchSettingCard: React.FC<SwitchSettingCardProps> = ({ forwardRef, input
   return (
     <Card
       ref={forwardRef}
-      tabIndex={0}
       sx={{ m: 1 }}
     >
       <Stack
