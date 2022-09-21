@@ -1,7 +1,7 @@
 import { Card, FormControlLabel, Switch, Typography } from '@mui/material';
 import React, { EventHandler, ReactElement, useCallback } from 'react';
 
-import apiClient from '../utils/apiClient';
+import useApiClient from '../utils/apiClient';
 
 type SwitchCardProps = {
   id: number;
@@ -10,9 +10,10 @@ type SwitchCardProps = {
 }
 
 const SwitchCard: React.FC<SwitchCardProps> = ({ id, label, turnOn }): JSX.Element => {
+  const { apiClient } = useApiClient()
   const onChnageSwitch = useCallback(async (checked: boolean) => {
     await apiClient.switcher.update({ id, turnOn: checked })
-  }, [id])
+  }, [apiClient, id])
 
   return (
     <Card

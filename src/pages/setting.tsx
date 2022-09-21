@@ -7,7 +7,8 @@ import SwitchSettingCard, { FormInput } from '../components/SwitchSettingCard';
 import SwitchSettingCardRef from '../components/SwitchSettingCardRef';
 import useEnqueueSnackbar from '../hooks/useEnqueueSnackbar';
 import usePubSub from '../hooks/usePubsub';
-import apiClient, { useSwitcherSWR } from '../utils/apiClient';
+import apiClient from '../utils/apiClient';
+import useApiClient from '../utils/apiClient';
 import { prismaClient } from '../utils/prismaClient';
 
 import type { GetServerSideProps, NextPage } from 'next'
@@ -38,6 +39,7 @@ export const getServerSideProps: GetServerSideProps<SettingPageProps> = async (c
 }
 
 const SettingPage: NextPage<SettingPageProps> = ({ fallback }) => {
+  const { apiClient, useSwitcherSWR } = useApiClient()
   const { isLoading, switchers, mutate } = useSwitcherSWR(fallback.switchers)
   const { subscribe, unsubscribe } = usePubSub()
   const [shownNewCardArea, setShownNewCardArea] = useState(false)
@@ -52,17 +54,15 @@ const SettingPage: NextPage<SettingPageProps> = ({ fallback }) => {
       await apiClient.switcher.create({ ...req })
       setFadeNewCard(false)
     } else {
-      await apiClient.switcher.update({ ...input }).catch((reason) => {
-        enqueueErrorSnackbar(reason.message, { httpError: { status: reason.request.status, errorCode: reason.code, url: reason.config.url } })
-      })
+      await apiClient.switcher.update({ ...input })
     }
     mutate()
-  }, [mutate, enqueueErrorSnackbar])
+  }, [apiClient, mutate])
 
   const onDeleteButtonClick = useCallback(async (id: number) => {
     await apiClient.switcher.delete({ id: id })
     mutate()
-  }, [mutate])
+  }, [apiClient, mutate])
 
   const onCancelNewCardButtonClick = useCallback(() => {
     // scroll up and hide on cancel

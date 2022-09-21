@@ -2,7 +2,7 @@ import { Typography } from '@mui/material';
 import parse from 'html-react-parser';
 import { useEffect, useState } from 'react';
 
-import { useLogSWR } from '../utils/apiClient';
+import useApiClient from '../utils/apiClient';
 
 import type { NextPage } from 'next'
 
@@ -17,8 +17,9 @@ type LogPageProps = {
 }
 
 const LogPage: NextPage<LogPageProps> = ({ }) => {
-  const [log, setLog] = useState('')
+  const { useLogSWR } = useApiClient()
   const { data } = useLogSWR()
+  const [log, setLog] = useState('')
 
   useEffect(() => {
     if (data) {

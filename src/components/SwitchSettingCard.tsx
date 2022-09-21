@@ -6,7 +6,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { useToggle } from 'react-use';
 
 import usePrefersReducedMotion from '../hooks/usePrefersReducedMotion';
-import apiClient from '../utils/apiClient';
+import useApiClient from '../utils/apiClient';
 
 export type FormInput = {
   id: number,
@@ -29,6 +29,7 @@ export type SwitchSettingCardProps = {
 
 const SwitchSettingCard: React.FC<SwitchSettingCardProps> = ({ forwardRef, input, delegate }) => {
   const prefersReducedMotion = usePrefersReducedMotion()
+  const { apiClient } = useApiClient()
   const isCreateNew = input.id === 0;
   const [isEdit, toggleEdit] = useToggle(isCreateNew);
   const nameInputRef = useRef<HTMLInputElement | null>(null);
