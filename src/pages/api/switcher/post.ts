@@ -1,13 +1,14 @@
-import { Prisma, Switcher } from '@prisma/client';
-import { NextApiHandler } from 'next';
+import { Switcher } from '@prisma/client';
+import { NextApiRequest, NextApiResponse } from 'next';
 
 import logger from '../../../logger/logger';
+import { ErrorResponse } from '../../../types/ErrorResponse';
 import { prismaClient } from '../../../utils/prismaClient';
 
 export type SwitcherCreateRequest = Omit<Switcher, 'id' | 'createdAt' | 'updatedAt'>;
-export type SwitcherCreateResponse = {};
+export type SwitcherCreateResponse = {} | ErrorResponse;
 
-const handler: NextApiHandler<SwitcherCreateResponse> = async (req, res) => {
+const handler = async (req: NextApiRequest, res: NextApiResponse<SwitcherCreateResponse>) => {
   const switcher = req.body as SwitcherCreateRequest;
 
   try {
@@ -18,8 +19,11 @@ const handler: NextApiHandler<SwitcherCreateResponse> = async (req, res) => {
     });
     res.status(200).end();
   } catch (e) {
-    logger.error(e);
-    throw e;
+    if (e instanceof Error) {
+      e.stack = '';
+      logger.error(e);
+      res.status(500).json({ message: e.message });
+    }
   }
 };
 

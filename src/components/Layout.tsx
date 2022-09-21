@@ -11,6 +11,7 @@ type LayoutProps = {
 const Layout: React.FC<LayoutProps> = ({ children }): JSX.Element => {
   return (
     <SnackbarProvider
+      autoHideDuration={10000} // ms
       maxSnack={3}
       anchorOrigin={{
         vertical: 'bottom',
@@ -18,7 +19,6 @@ const Layout: React.FC<LayoutProps> = ({ children }): JSX.Element => {
       }}
       TransitionComponent={Grow}
       hideIconVariant
-
     >
       <MenuAppBar />
       <main>
