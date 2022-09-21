@@ -1,8 +1,8 @@
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import { NextApiRequest, NextApiResponse } from 'next';
 
+import { ErrorResponse } from '../../../../common/ErrorResponse';
 import logger from '../../../../logger/logger';
-import { ErrorResponse } from '../../../../types/ErrorResponse';
 import { prismaClient } from '../../../../utils/prismaClient';
 
 export type SwitcherDeleteRequest = {

@@ -2,8 +2,8 @@ import fs from 'fs';
 import { NextApiRequest, NextApiResponse } from 'next';
 import path from 'path';
 
+import { ErrorResponse } from '../../../common/ErrorResponse';
 import logger from '../../../logger/logger';
-import { ErrorResponse } from '../../../types/ErrorResponse';
 
 export type LogGetRequest = {};
 
