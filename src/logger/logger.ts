@@ -1,8 +1,9 @@
+import path from 'path';
 import pino from 'pino';
 
 import type { LoggerOptions } from 'pino';
 
-const logFilePath = process.env.LOG_FILE_PATH;
+const logFilePath = path.join(process.cwd(), process.env.LOG_FILE_PATH);
 const logFileRegex = /(.+)\.log$/;
 if (!logFileRegex.test(logFilePath)) {
   // eslint-disable-next-line no-console
