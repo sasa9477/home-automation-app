@@ -14,26 +14,8 @@ type MenuAppBarProps = {
 const MenuAppBar: React.FC<MenuAppBarProps> = (): JSX.Element => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const { publish } = usePubSub()
-
-  const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
   const router = useRouter()
-  const isShownAppBarButton = ['/setting'].includes(router.pathname)
-
-  const onAppBarButtonClick = useCallback(() => {
-    switch (router.pathname) {
-      case '/setting':
-        return publish('AppBarButtonClickEvent')
-      default:
-        break;
-    }
-  }, [router.pathname, publish])
+  const [appBarButtonContent, setAppBarButtonContent] = React.useState('')
 
   const menuList = [
     {
@@ -49,6 +31,41 @@ const MenuAppBar: React.FC<MenuAppBarProps> = (): JSX.Element => {
       name: 'ログ',
     }
   ]
+
+  const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const onAppBarButtonClick = useCallback(() => {
+    switch (router.pathname) {
+      case '/setting':
+        publish('AppBarAddSettingButtonClickEvent')
+        break;
+      case '/log':
+        publish('AppBarClearLogButtonClickEvent')
+        break;
+      default:
+        break;
+    }
+  }, [router.pathname, publish])
+
+  React.useEffect(() => {
+    switch (router.pathname) {
+      case '/setting':
+        setAppBarButtonContent('追加')
+        break;
+      case '/log':
+        setAppBarButtonContent('クリア')
+        break;
+      default:
+        setAppBarButtonContent('')
+        break;
+    }
+  }, [router.pathname])
 
   return (
     <AppBar position="sticky">
@@ -96,11 +113,11 @@ const MenuAppBar: React.FC<MenuAppBarProps> = (): JSX.Element => {
         </Link>
         <Button
           sx={{
-            display: isShownAppBarButton ? undefined : 'none'
+            display: appBarButtonContent !== '' ? undefined : 'none'
           }}
           onClick={onAppBarButtonClick}
         >
-          追加
+          {appBarButtonContent}
         </Button>
       </Toolbar>
     </AppBar>

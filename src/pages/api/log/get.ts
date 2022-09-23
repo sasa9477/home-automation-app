@@ -10,8 +10,11 @@ export type LogGetResponse = {
 };
 
 const handler = async (req: NextApiRequest, res: NextApiResponse<LogGetResponse>) => {
-  const logFilePath = process.env.LOG_FILE_PATH;
-  const log = fs.readFileSync(path.join(process.cwd(), logFilePath), 'utf8');
+  let log = '';
+  const logFilePath = path.join(process.cwd(), process.env.LOG_FILE_PATH);
+  if (fs.existsSync(logFilePath)) {
+    log = fs.readFileSync(logFilePath, 'utf8');
+  }
   res.status(200).json({ log });
 };
 

@@ -3,6 +3,7 @@ import useSWR from 'swr';
 
 import useEnqueueSnackbar from '../hooks/useEnqueueSnackbar';
 
+import type { LogDeleteRequest, LogDeleteResponse } from '../pages/api/log/delete';
 import type { LogGetResponse } from '../pages/api/log/get';
 import type { SwitcherGetResponse } from '../pages/api/switcher/get';
 import type { SwitcherDeleteRequest, SwitcherDeleteResponse } from '../pages/api/switcher/delete/[id]';
@@ -43,6 +44,9 @@ const useApiClient = () => {
       create: (req: SwitcherCreateRequest) => instance.post<SwitcherCreateResponse>('/api/switcher/post', req),
       update: (req: SwitcherUpdateRequest) => instance.patch<SwitcherUpdateResponse>('/api/switcher/patch', req),
       delete: (req: SwitcherDeleteRequest) => instance.delete<SwitcherDeleteResponse>(`/api/switcher/delete/${req.id}`),
+    },
+    log: {
+      delete: (req?: LogDeleteRequest) => instance.delete<LogDeleteResponse>('/api/log/delete'),
     },
   };
 

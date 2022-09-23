@@ -1,8 +1,8 @@
+import { existsSync, mkdirSync } from 'fs';
 import path from 'path';
 import pino from 'pino';
 
 import type { LoggerOptions } from 'pino';
-
 const logFilePath = path.join(process.cwd(), process.env.LOG_FILE_PATH);
 const logFileRegex = /(.+)\.log$/;
 if (!logFileRegex.test(logFilePath)) {
@@ -11,6 +11,14 @@ if (!logFileRegex.test(logFilePath)) {
   process.exit(1);
 }
 const rawFileLogPath = logFilePath.replace(logFileRegex, '$1_raw.log');
+
+const parentDir = path.dirname(logFilePath);
+
+if (!existsSync(parentDir)) {
+  mkdirSync(parentDir, {
+    recursive: true,
+  });
+}
 
 const config: LoggerOptions = {
   level: 'info',

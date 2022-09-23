@@ -107,11 +107,11 @@ const SettingPage: NextPage<SettingPageProps> = ({ fallback }) => {
   })
 
   useMount(() => {
-    subscribe('AppBarButtonClickEvent', onAppBarButtonClick)
+    subscribe('AppBarAddSettingButtonClickEvent', onAppBarButtonClick)
   })
 
   useUnmount(() => {
-    unsubscribe('AppBarButtonClickEvent', onAppBarButtonClick)
+    unsubscribe('AppBarAddSettingButtonClickEvent', onAppBarButtonClick)
   })
 
   return (

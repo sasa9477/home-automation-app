@@ -1,11 +1,12 @@
 import { Typography } from '@mui/material';
 import parse from 'html-react-parser';
 import { useEffect, useState } from 'react';
+import { useMount, useUnmount } from 'react-use';
 
+import usePubSub from '../hooks/usePubsub';
 import useApiClient from '../utils/apiClient';
 
 import type { NextPage } from 'next'
-
 const errorTypeRegex = /(INFO|WARN|ERROR)/g
 const errorTypeWithTag: Record<string, string> = {
   'INFO': '<span className="info">INFO</span>',
@@ -17,9 +18,10 @@ type LogPageProps = {
 }
 
 const LogPage: NextPage<LogPageProps> = ({ }) => {
-  const { useLogSWR } = useApiClient()
-  const { data } = useLogSWR()
+  const { apiClient, useLogSWR } = useApiClient()
+  const { data, mutate } = useLogSWR()
   const [log, setLog] = useState('')
+  const { subscribe, unsubscribe } = usePubSub()
 
   useEffect(() => {
     if (data) {
@@ -31,6 +33,21 @@ const LogPage: NextPage<LogPageProps> = ({ }) => {
       }, 100);
     }
   }, [data, setLog])
+
+  const onAppBarButtonClick = () => {
+    apiClient.log.delete()
+    setTimeout(() => {
+      mutate()
+    }, 100)
+  }
+
+  useMount(() => {
+    subscribe('AppBarClearLogButtonClickEvent', onAppBarButtonClick)
+  })
+
+  useUnmount(() => {
+    unsubscribe('AppBarClearLogButtonClickEvent', onAppBarButtonClick)
+  })
 
   return (
     <Typography
