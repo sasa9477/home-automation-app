@@ -1,14 +1,12 @@
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import { NextApiRequest, NextApiResponse } from 'next';
 
-import { ErrorResponse } from '../../../../common/ErrorResponse';
-import logger from '../../../../logger/logger';
 import { prismaClient } from '../../../../utils/prismaClient';
+import withErrorHandle from '../../../../utils/withErrorHandle';
 
 export type SwitcherDeleteRequest = {
   id: number;
 };
-export type SwitcherDeleteResponse = {} | ErrorResponse;
+export type SwitcherDeleteResponse = {};
 
 const handler = async (req: NextApiRequest, res: NextApiResponse<SwitcherDeleteResponse>) => {
   const { id: queryId } = req.query;
@@ -19,20 +17,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<SwitcherDeleteR
     return;
   }
 
-  try {
-    await prismaClient.switcher.delete({
-      where: {
-        id: id,
-      },
-    });
-    res.status(200).end();
-  } catch (e) {
-    if (e instanceof Error) {
-      e.stack = '';
-      logger.error(e);
-      res.status(500).json({ message: e.message });
-    }
-  }
+  await prismaClient.switcher.delete({
+    where: {
+      id: id,
+    },
+  });
+  res.status(200).end();
 };
 
-export default handler;
+export default withErrorHandle(handler);
