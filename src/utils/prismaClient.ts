@@ -1,8 +1,6 @@
-import { PrismaClient } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
 
 import logger from '../logger/logger';
-
-import type { Prisma } from '@prisma/client';
 
 // https://www.prisma.io/docs/guides/database/troubleshooting-orm/help-articles/nextjs-prisma-client-dev-practices
 declare global {
@@ -11,7 +9,7 @@ declare global {
   var prisma: PrismaClient | undefined;
 }
 
-function createPrismaClient() {
+const prisma = (function () {
   // issue: $on関数の eventTypeに Prisma.LogLevel を設定できない
   // https://github.com/notiz-dev/nestjs-prisma/issues/23
   // https://github.com/prisma/prisma/issues/11986#issuecomment-1152628803
@@ -36,10 +34,8 @@ function createPrismaClient() {
   });
 
   return prisma;
-}
+})();
 
-export const prismaClient = global.prisma || createPrismaClient();
+export const prismaClient = global.prisma || prisma;
 
-if (process.env.NODE_ENV !== 'production' && !global.prisma) {
-  global.prisma = prismaClient;
-}
+if (process.env.NODE_ENV !== 'production') global.prisma = prismaClient;
