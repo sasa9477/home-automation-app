@@ -5,9 +5,7 @@ import { useMount, useUnmount } from 'react-use';
 
 import SwitchSettingCard, { FormInput } from '../components/SwitchSettingCard';
 import SwitchSettingCardRef from '../components/SwitchSettingCardRef';
-import useEnqueueSnackbar from '../hooks/useEnqueueSnackbar';
 import usePubSub from '../hooks/usePubsub';
-import apiClient from '../utils/apiClient';
 import useApiClient from '../utils/apiClient';
 import { prismaClient } from '../utils/prismaClient';
 
@@ -45,7 +43,6 @@ const SettingPage: NextPage<SettingPageProps> = ({ fallback }) => {
   const [shownNewCardArea, setShownNewCardArea] = useState(false)
   const [fadeNewCard, setFadeNewCard] = useState(false)
   const newCardRef = useRef<HTMLDivElement | null>(null)
-  const { enqueueErrorSnackbar } = useEnqueueSnackbar()
 
   const onSaveButtonClick = useCallback(async (input: FormInput) => {
     if (input.id === 0) {
