@@ -11,6 +11,18 @@
 #define SERVO_WRITE_LED_PIN 13
 #define SERVO_PIN 4
 
+const char* wl_status_string_t[] = {
+"WL_NO_SHIELD",
+"WL_IDLE_STATUS",
+"WL_NO_SSID_AVAIL",
+"WL_SCAN_COMPLETED",
+"WL_CONNECTED",
+"WL_CONNECT_FAILED",
+"WL_CONNECTION_LOST",
+"WL_WRONG_PASSWORD",
+"WL_DISCONNECTED",
+};
+
 // DNS server
 const byte DNS_PORT = 53;
 DNSServer dnsServer;
@@ -42,8 +54,8 @@ void setup() {
   pinMode(SERVO_WRITE_LED_PIN, OUTPUT);
 
   // Initialize servo
-//  servo.attach(SERVO_PIN);
-//  servo.write(0);
+  // servo.attach(SERVO_PIN);
+  // servo.write(0);
 
   // Setup wifi
   apIP = generatePrivateIpAddress();
@@ -68,6 +80,7 @@ void setup() {
   server.begin();
   Serial.println(F("HTTP server started."));
 
+  // clearWifiConfigInEEPROM();
   loadWifiConfigFromEEPROM();
 
   tryToConnect = strlen(ssid) > 0;
@@ -97,7 +110,7 @@ void loop() {
   // WLAN status changed
   if (status != wlanStatus) {
     Serial.print(F("WLAN Status: "));
-    Serial.println(status);
+    Serial.println(wl_status_string_t[status]);
     wlanStatus = status;
 
     if (status == WL_CONNECTED) {
@@ -128,17 +141,3 @@ void loop() {
   dnsServer.processNextRequest();
   server.handleClient();
 }
-
-/* Wifi status
-typedef enum {
-    WL_NO_SHIELD        = 255,   // for compatibility with WiFi Shield library
-    WL_IDLE_STATUS      = 0,
-    WL_NO_SSID_AVAIL    = 1,
-    WL_SCAN_COMPLETED   = 2,
-    WL_CONNECTED        = 3,
-    WL_CONNECT_FAILED   = 4,
-    WL_CONNECTION_LOST  = 5,
-    WL_WRONG_PASSWORD   = 6,
-    WL_DISCONNECTED     = 7
-} wl_status_t;
-*/
