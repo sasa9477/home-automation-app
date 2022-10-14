@@ -16,7 +16,7 @@
 
 ## F マクロ関数
 
-Fマクロ関数を使用することで、SRAM(読み書き可能なメモリ)から Flashメモリ(読み取り専用)の読み込みに変わるので、実行時に読み取られることで SRAMのメモリ使用量削減になる    
+Fマクロ関数を使用することで、SRAM(読み書き可能なメモリ)から Flashメモリ(読み取り専用)の読み込みに変わるので、実行時に読み取られることで SRAMのメモリ使用量削減になる  
 原文： https://www.arduino.cc/reference/en/language/variables/utilities/progmem/#_the_f_macro  
 Arduino 日本語リファレンス: http://www.musashinodenpa.com/arduino/ref/index.php?f=0&pos=1830  
 Qiita: https://qiita.com/ma2shita/items/89ed5b74698d4922efdd  
@@ -30,5 +30,8 @@ Qiita: https://qiita.com/ma2shita/items/89ed5b74698d4922efdd
 - [ファイル] > [スケッチ例] でスケッチ例を ESP-WROOM-02 の開発に役立つスケッチ例を確認できる 今回のコードは [スケッチ例] > [DNSServer] > [CaptivePortalAdvanced]を参考にした
 
 ## ESP8266 ボード設定例
-
+2MB  
 ![esp8266_board_setting](doc/images/esp8266_board_setting.png)
+
+4MB  
+![esp8266_board_setting2](doc/images/esp8266_board_setting2.png)
