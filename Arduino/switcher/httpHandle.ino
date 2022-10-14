@@ -1,3 +1,8 @@
+struct wifi_info_t {
+  String ssid;
+  int32_t rssi;
+};
+
 void setServerNoCacheHeader() {
   server.sendHeader("Cache-Control", "no-cache, no-store, must-revalidate");
   server.sendHeader("Pragma", "no-cache");
@@ -25,10 +30,13 @@ void handleRoot() {
   String html;
   html += F(
     "<!DOCTYPE html><html lang='en'><head>"
-    "<meta name='viewport' content='width=device-width'>"
+    "<meta charset='UTF-8'>"
+    "<meta name='viewport' content='width=device-width, initial-scale=1.0'>"
     "<meta name='robots' content='noindex, nofollow, noarchive'/>"
     "<meta httpEquiv='content-language' content='ja'/>"
-    "<title>Switcher</title></head><body>"
+    "<title>Switcher</title>"
+    "<style>thead { text-align: left; }</style>"
+    "</head><body>"
     "<h1>Switcher</h1>"
     );
 
@@ -45,10 +53,16 @@ void handleRoot() {
   if (numNetwork == 0) {
     html += F("<div>No WLAN found</div>");
   } else {
-    for (int i = 0; i < numNetwork; i++) {
-      html += String(F("<div>SSID : ")) + WiFi.SSID(i) + F(" (") + WiFi.RSSI(i) + F(")</div>");
+    html += F("<table><thead><tr><th>SSID</th><th>RSSI</th></tr></thead><tbody>");
+    std::list<wifi_info_t> wifiInfoLists;
+    for (int8_t i = 0; i < numNetwork; i++) {
+      wifiInfoLists.push_back({  WiFi.SSID(i), WiFi.RSSI(i) });
     }
-    html += F("<div>The values given in parentheses are RSSI.</div>");
+    wifiInfoLists.sort([](const wifi_info_t& a, const wifi_info_t& b){ return a.rssi > b.rssi; });
+    for (wifi_info_t wifiInfo : wifiInfoLists) {
+      html += String(F("<tr><td>")) + wifiInfo.ssid + F("</td><td>") + wifiInfo.rssi + F("dBm</td></tr>");
+    }
+    html += F("</tbody></table>");
   }
 
   html += F(
@@ -58,22 +72,6 @@ void handleRoot() {
     "<input type='text' name='pass' placeholder='password'/><br/>"
     "<input type='submit'/>"
     );
-
-  struct FlashChipConfig chipConfig = loadFlashChipConfig();
-
-  html += F("<h3>Chip config</h3>");
-  html += String(F("<div>Flash real id (hex): ")) + String(chipConfig.chipId, HEX) + F("</div>");
-  html += String(F("<div>Flash real size: ")) + String(chipConfig.realSize) + F(" bytes</div>");
-  html += String(F("<div>Flash ide size: ")) + String(chipConfig.ideSize) + F(" bytes</div>");
-  html += String(F("<div>Flash ide speed: ")) + String(chipConfig.ideSpeed) + F(" Hz</div>");
-  html += String(F("<div>Flash ide mode: ")) + String(chipConfig.ideMode) + F("</div>");
-  html += String(F("<div>Flash cpu frequency: ")) + String(chipConfig.cpuFreqMHz) + F(" MHz</div>");
-  html += String(F("<div>Flash boot version: ")) + String(chipConfig.bootVersion) + F("</div>");
-  html += String(F("<div>Flash boot mode: ")) + String(chipConfig.bootMode) + F("</div>");
-  html += String(F("<div>Flash sdk version: ")) + String(chipConfig.sdkVersion) + F("</div>");
-  html += String(F("<div>Flash core version: ")) + String(chipConfig.coreVersion) + F("</div>");
-  html += String(F("<div>Flash full version: ")) + String(chipConfig.fullVersion) + F("</div>");
-  html += String(F("<div>Flash configuration: ")) + String(chipConfig.configValid) + F("</div>");
 
   html += String(F("</body>"));
 
@@ -94,20 +92,11 @@ void handleWifiConfigSave() {
 }
 
 void handleSwitchPost() {
-  digitalWrite(SERVO_WRITE_LED_PIN, HIGH);
-
-//  if (servo.read() == 0) {
-//    servo.write(180);
-//  } else {
-//    servo.write(0);
-//  }
-  delay(500);
+  toggleServoPosition();
 
   String body = String(F("servo angle changed. current angle: ")) + servo.read();
   setServerNoCacheHeader();
   server.send(200, "text/plain", body);
-
-  digitalWrite(SERVO_WRITE_LED_PIN, LOW);
 }
 
 

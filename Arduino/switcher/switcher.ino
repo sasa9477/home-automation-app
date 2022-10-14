@@ -1,3 +1,4 @@
+#include <list>
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
 #include <ESP8266mDNS.h>
@@ -6,21 +7,22 @@
 #include <EEPROM.h>
 #include <Servo.h>
 
-#define PUSH_BUTTON_PIN 14
+#define TRIGGER_SWITCH_PIN 14
 #define WIFI_CONNECTED_LED_PIN 12
 #define SERVO_WRITE_LED_PIN 13
 #define SERVO_PIN 4
+#define SOFT_AP_PASSWORD "123456789"
 
-const char* wl_status_string_t[] = {
-"WL_NO_SHIELD",
-"WL_IDLE_STATUS",
-"WL_NO_SSID_AVAIL",
-"WL_SCAN_COMPLETED",
-"WL_CONNECTED",
-"WL_CONNECT_FAILED",
-"WL_CONNECTION_LOST",
-"WL_WRONG_PASSWORD",
-"WL_DISCONNECTED",
+const char* wl_status_t_strs[] = {
+  "WL_NO_SHIELD",
+  "WL_IDLE_STATUS",
+  "WL_NO_SSID_AVAIL",
+  "WL_SCAN_COMPLETED",
+  "WL_CONNECTED",
+  "WL_CONNECT_FAILED",
+  "WL_CONNECTION_LOST",
+  "WL_WRONG_PASSWORD",
+  "WL_DISCONNECTED",
 };
 
 // DNS server
@@ -34,13 +36,18 @@ IPAddress netMask(255, 255, 255, 0);
 char ssid[33] = "";
 char password[65] = "";
 char myhostname[22] = "";
-const char* softApPassword = "switcher";
 
-boolean tryToConnect;
-unsigned int lastConnectTry = 0;
+// Try connect to WLAN
+bool tryToConnect;
+// Last time tried to connect to WLAN
+unsigned long lastConnectTry = 0;
+// Current WLAN status
 wl_status_t wlanStatus = WL_IDLE_STATUS;
 
 Servo servo;
+
+bool servoMoving;
+bool lastTriggerSwitch;
 
 void setup() {
   delay(1000);
@@ -49,19 +56,19 @@ void setup() {
   Serial.println(F("\nESP8266 WiFi DNS Server - Switcher"));
 
   // Setup pin mode
-  pinMode(PUSH_BUTTON_PIN, INPUT);
+  pinMode(TRIGGER_SWITCH_PIN, INPUT);
   pinMode(WIFI_CONNECTED_LED_PIN, OUTPUT);
   pinMode(SERVO_WRITE_LED_PIN, OUTPUT);
 
   // Initialize servo
-  // servo.attach(SERVO_PIN);
-  // servo.write(0);
+  servo.attach(SERVO_PIN);
+  servo.write(0);
 
   // Setup wifi
   apIP = generatePrivateIpAddress();
   sprintf(myhostname, "switcher-%s", macAddressString().c_str());
   WiFi.softAPConfig(apIP, apIP, netMask);
-  WiFi.softAP(myhostname, softApPassword); // Use hostname as softAP ssid.
+  WiFi.softAP(myhostname, SOFT_AP_PASSWORD); // Use hostname as softAP ssid.
   delay(500); // Without delay I've seen the IP address blank.
   Serial.print(F("AP IP address: "));
   Serial.println(WiFi.softAPIP());
@@ -80,13 +87,26 @@ void setup() {
   server.begin();
   Serial.println(F("HTTP server started."));
 
-  // clearWifiConfigInEEPROM();
   loadWifiConfigFromEEPROM();
+  if (ssid[0] == (char)255) {
+    // Initialize EEPROM
+    Serial.println("clear EEPROM");
+    clearWifiConfigInEEPROM();
+    ssid[0] = '\0';
+  }
+  Serial.printf(PSTR("ssid[0]: %d ssid_strlen: %d \n"), ssid[0], strlen(ssid));
 
   tryToConnect = strlen(ssid) > 0;
 }
 
 void loop() {
+  bool triggerSwitch = (digitalRead(TRIGGER_SWITCH_PIN) == LOW);
+  if (triggerSwitch && !lastTriggerSwitch) {
+    delay(20);
+    toggleServoPosition();
+  }
+  lastTriggerSwitch = triggerSwitch;
+
   if (tryToConnect) {
     tryToConnect = false;
     Serial.println(F("Connecting as WiFi client..."));
@@ -94,8 +114,7 @@ void loop() {
     WiFi.begin(ssid, password);
 
     int connectionResult = WiFi.waitForConnectResult();
-    Serial.print(F("WiFi connection result: "));
-    Serial.println(connectionResult);
+    Serial.printf(PSTR("WiFi connection result: %s \n"), wl_status_t_strs[connectionResult]);
 
     // millis: Returns the number of milliseconds passed since the Arduino board began running the current program. This number will overflow (go back to zero), after approximately 50 days.
     lastConnectTry = millis();
@@ -109,14 +128,11 @@ void loop() {
 
   // WLAN status changed
   if (status != wlanStatus) {
-    Serial.print(F("WLAN Status: "));
-    Serial.println(wl_status_string_t[status]);
+    Serial.printf(PSTR("WLAN Status: %s \n"), wl_status_t_strs[status]);
     wlanStatus = status;
 
     if (status == WL_CONNECTED) {
-      Serial.print(F("Wifi connected: "));
-      Serial.print(WiFi.SSID());
-      Serial.print(F(" "));
+      Serial.printf(PSTR("Wifi connected: %s "), WiFi.SSID());
       Serial.println(WiFi.localIP());
 
       if (!MDNS.begin(myhostname)) {
