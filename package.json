@@ -10,6 +10,7 @@
     "analyze": "cross-env ANALYZE=true next build",
     "prisma-generate": "yarn prisma version && yarn prisma format && yarn prisma generate",
     "prisma-migrate": "yarn prisma migrate dev --name",
+    "prisma-init": "npx prisma db push",
     "prisma-db-push-force": "yarn prisma db push --accept-data-loss && node script/prisma-seed.js",
     "prisma-studio": "yarn prisma studio",
     "prisma-seed": "node script/prisma-dev-seed.js"
@@ -19,7 +20,7 @@
     "@emotion/styled": "^11.10.4",
     "@mui/icons-material": "^5.10.3",
     "@mui/material": "^5.10.4",
-    "@prisma/client": "^4.3.1",
+    "@prisma/client": "^4.4.0",
     "axios": "^0.27.2",
     "html-react-parser": "^3.0.4",
     "next": "12.3.0",
