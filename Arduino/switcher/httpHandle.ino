@@ -34,9 +34,12 @@ void handleRoot() {
     "<meta name='viewport' content='width=device-width, initial-scale=1.0'>"
     "<meta name='robots' content='noindex, nofollow, noarchive'/>"
     "<meta httpEquiv='content-language' content='ja'/>"
-    "<title>Switcher</title>"
+    );
+  html += String(F("<title>")) + String(myhostname) + F("</title>");
+  html += F(
     "<style>thead { text-align: left; }</style>"
-    "</head><body>"
+    "</head>"
+    "<body>"
     "<h1>Switcher</h1>"
     );
 
