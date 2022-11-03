@@ -7,11 +7,11 @@
 #include <EEPROM.h>
 #include <Servo.h>
 
-#define TRIGGER_SWITCH_PIN 14
-#define WIFI_CONNECTED_LED_PIN 12
-#define SERVO_WRITE_LED_PIN 13
-#define SERVO_PIN 4
-#define SOFT_AP_PASSWORD "123456789"
+#define TRIGGER_SWITCH_PIN 4
+#define WIFI_CONNECTED_LED_PIN 16
+#define SERVO_WRITE_LED_PIN 5
+#define SERVO_PIN 13
+#define SOFT_AP_PASSWORD "switcher"
 
 const char* wl_status_t_strs[] = {
   "WL_NO_SHIELD",
@@ -132,7 +132,8 @@ void loop() {
     wlanStatus = status;
 
     if (status == WL_CONNECTED) {
-      Serial.printf(PSTR("Wifi connected: %s "), WiFi.SSID());
+      Serial.println(F("Wifi connected."));
+      Serial.println(WiFi.SSID());
       Serial.println(WiFi.localIP());
 
       if (!MDNS.begin(myhostname)) {
